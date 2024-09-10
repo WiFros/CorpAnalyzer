@@ -9,4 +9,3 @@ chmod +x .githooks/*
 echo "Git hooks가 성공적으로 업데이트되었습니다."
 echo "현재 사용 중인 hooks:"
 ls -l .githooks
-
