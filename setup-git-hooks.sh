@@ -4,16 +4,16 @@
 mkdir -p .githooks
 
 # commit-msg 훅 생성
-cat > .githooks/commit-msg << EOL
+cat > .githooks/commit-msg << 'EOL'
 #!/bin/bash
 
-commit_msg_file=\$1
-commit_msg=\$(cat "\$commit_msg_file")
+commit_msg_file=$1
+commit_msg=$(cat "$commit_msg_file")
 
 # 커밋 메시지 패턴 정의 (예: "type: subject")
 pattern="^(feat|fix|docs|style|refactor|test|chore): .{1,50}$"
 
-if ! [[ "\$commit_msg" =~ \$pattern ]]; then
+if ! [[ "$commit_msg" =~ $pattern ]]; then
     echo "오류: 커밋 메시지가 지정된 규칙을 따르지 않습니다."
     echo "커밋 메시지는 다음 형식을 따라야 합니다: type: subject"
     echo "허용되는 타입: feat, fix, docs, style, refactor, test, chore"
@@ -23,7 +23,7 @@ fi
 EOL
 
 # post-merge 훅 생성
-cat > .githooks/post-merge << EOL
+cat > .githooks/post-merge << 'EOL'
 #!/bin/bash
 
 # Git 설정을 변경하여 .githooks 디렉토리를 사용하도록 설정
@@ -33,12 +33,12 @@ git config core.hooksPath .githooks
 chmod +x .githooks/*
 
 echo "Git hooks가 성공적으로 업데이트되었습니다."
+echo "현재 사용 중인 hooks:"
+ls -l .githooks
 EOL
 
-# 훅 파일들에 실행 권한 부여
+# 훅 파일들에 실행 권한 부여 및 Git 설정
 chmod +x .githooks/*
-
-# Git 설정을 변경하여 .githooks 디렉토리를 사용하도록 설정
 git config core.hooksPath .githooks
 
 echo "Git hooks가 성공적으로 설정되었습니다."

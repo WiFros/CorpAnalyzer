@@ -501,5 +501,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
+.githooks
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,intellij,python,java,apachehadoop,vue,spark

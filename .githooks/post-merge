@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# Git 설정을 변경하여 .githooks 디렉토리를 사용하도록 설정
-git config core.hooksPath .githooks
-
-# 모든 훅 파일에 실행 권한 부여
-chmod +x .githooks/*
-
-echo "Git hooks가 성공적으로 업데이트되었습니다."
