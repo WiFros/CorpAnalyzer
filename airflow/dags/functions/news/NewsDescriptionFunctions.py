@@ -1,15 +1,17 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 from requests import Response
 
 
-def get_processed_article(**context) -> list[dict]:
+def get_processed_article(group_number: int, **context) -> list[dict]:
     """
     필터링된 뉴스 dictionary list 에서 링크를 통해 기사의 Full Description 및 Title 을 크롤링해 반환하는 메서드
 
     :return: 가공된 기사 Title 및 Description dictionary list
     """
-    news_info_list: list = context["task_instance"].xcom_pull(task_ids="filtering_news")
+    news_info_list: list = context["task_instance"].xcom_pull(task_ids=f"filtering_news_{group_number}")
     result_list: list = []
 
     for news_info in news_info_list:
@@ -51,10 +53,11 @@ def _get_description_from_html(response: Response) -> dict:
     result_title: str = title.replace('\n', ' ')
     result_description: str = description.replace('\n', ' ')
 
-    return {"title": result_title, "description": result_description}
+    return {"title": result_title, "description": result_description.strip()}
 
 def print_result(**context) -> None:
-    result_list: list[dict] = context["task_instance"].xcom_pull(task_ids="get_processed_article")
+    result_data: list[dict] = []
+    for i in range(1, 6):
+        result_data.extend(context['task_instance'].xcom_pull(task_ids=f"get_processed_articles_{i}"))
 
-    for result_dict in result_list:
-        print(result_dict)
+    print(json.dumps(result_data, ensure_ascii=False))

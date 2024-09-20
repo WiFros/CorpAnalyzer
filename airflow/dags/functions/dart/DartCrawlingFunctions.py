@@ -20,6 +20,10 @@ class NoSuchElementError(Exception):
 
 
 def search_corp() -> None:
+    """
+    키워드와 Dart API를 활용하여 해당 기업의 사업보고소 및 분기 보고서를 받는 함수
+    :return:
+    """
     result_data: list = dart.get_corp_list().find_by_corp_name("삼성전자")
 
     is_exists: bool = False
