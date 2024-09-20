@@ -90,18 +90,3 @@ def filtering_news(file_number: int, **context) -> list[dict]:
                 filtered_articles.append(element)
 
     return filtered_articles
-
-    # for article in article_list:
-    #     article_link: str = article['link']
-    #
-    #     if _NAVER_NEWS_PREFIX in article_link:
-    #         title: str = article['title']
-    #         published_at: str = article['pubDate']
-    #         element: dict = {
-    #             "title": title,
-    #             "link": article_link,
-    #             "pubDate": published_at
-    #         }
-    #         filtered_articles.append(element)
-    #
-    # return filtered_articles
