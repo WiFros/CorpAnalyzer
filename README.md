@@ -1,7 +1,36 @@
 # 프로젝트 이름
 
 ## 소개
-이 프로젝트는 [프로젝트에 대한 간단한 설명을 여기에 작성하세요].
+이 프로젝트는 기업 데이터를 이용하여 분석하는 사이트를 제공합니다. 
+API 게이트웨이, 뉴스 서비스, DART 서비스로 구성된 마이크로서비스 아키텍처를 사용합니다.
+
+## 사전 요구 사항
+- Docker
+- Docker Compose
+- NVIDIA GPU (dart_serv_app 및 news_serv_app용)
+
+## 설치 및 실행
+1. 저장소를 클론합니다:
+   ```
+   git clone [저장소 URL]
+   cd [프로젝트 디렉토리]
+   ```
+2. `.env.example`을 복사하여 `.env` 파일을 만들고 필요한 환경 변수를 설정합니다:
+   ```
+   cp .env.example .env
+   ```
+3. 다음 명령어로 서비스를 빌드하고 실행합니다:
+   ```
+   docker-compose up --build
+   ```
+
+## 서비스 설명
+- api_app (포트 8000): API 게이트웨이
+- news_serv_app (포트 8001): 뉴스 처리 서비스
+- dart_serv_app (포트 8002): DART 데이터 처리 서비스
+
+## API 사용 방법
+[API 엔드포인트와 사용 예시를 여기에 추가하세요]
 
 ## Git Hooks 설정
 
