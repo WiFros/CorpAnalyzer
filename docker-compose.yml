@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  api_app:
+    build: 
+      context: ./api_app
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DART_SERVICE_URL=${DART_SERVICE_URL:-http://dart_serv_app:8002}
+      - NEWS_SERVICE_URL=${NEWS_SERVICE_URL:-http://news_serv_app:8001}
+    volumes:
+      - ./api_app:/api_app
+    command: python app/main.py
+
+  dart_serv_app:
+    build: 
+      context: ./dart_serv_app
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./dart_serv_app:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  news_serv_app:
+    build: 
+      context: ./news_serv_app
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./news_serv_app:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
