@@ -59,6 +59,10 @@ def print_result(**context) -> None:
     result_data: list[dict] = []
     for i in range(1, 6):
         result_data.extend(context['task_instance'].xcom_pull(task_ids=f"get_processed_articles_{i}"))
+    
+    tmp_data: list[dict] = result_data
+    
+    session = requests.Session()
+    session.post("http://host.docker.internal:8000/preprocess/", json=tmp_data)
 
-    requests.post("http://localhost:8000", json=json.dumps(result_data, ensure_ascii=False))
     #print(json.dumps(result_data, ensure_ascii=False))
