@@ -175,4 +175,4 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 .data/ssafy_dataset_news_2023_sample.csv
-*.Zone.Identifier
+*Zone.Identifier
