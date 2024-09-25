@@ -60,10 +60,6 @@ class ESclient:
     
     def bulk_index(self, index_name ,docs):
 
-        # queries = [
-        #     {"index" : {"_index": index_name}
-        #     }
-        # ]
         queries = []
         for doc in docs:
             operation = {
@@ -80,18 +76,8 @@ class ESclient:
             }
             queries.append(operation)
 
-        # queries = [{"index": {"_index": index_name}}] + [{ "_source": doc } for doc in docs]
-        # Bulk API call
-
-        # body = []
-
-        # for query, doc in zip(queries, documents):
-        #     body.append(query)
-        #     body.append(doc)
-        
-        # response = self.client.bulk(index= index_name, body = queries)
         helpers.bulk(self.client,queries)
-        # return response
+
 
 
     
