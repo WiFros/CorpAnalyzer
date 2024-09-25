@@ -3,9 +3,11 @@ from typing import List
 from pydantic import BaseModel
 
 class SumResponse(BaseModel):
-    id : int
-    title: str
-    article : str
+    title : str
+    description : str
+    pubDate : str
+    link : str
+    company_names : List[str]
     summary : str
     # published_date: datetime 
 

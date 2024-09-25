@@ -3,10 +3,10 @@ from typing import List
 from pydantic import BaseModel
 
 class EmbeddingResponse(BaseModel):
-    id : int
-    title: str
-    article : str
-    embedding_vector : List[float]
+    title : str
+    description : str
+    pubDate : str
+    link : str
     # published_date: datetime 
 
 class EmbeddingBatchResponse(BaseModel):
