@@ -45,12 +45,5 @@ def summarization_processing(**context):
     return response.json()['data']
 
 
-def store_to_elastic_search(**context) -> None:
-    summarized_data: list = context['task_instance'].xcom_pull(task_ids='summarization_processing')
-
-    for data in summarized_data:
-        print(data)
-
-
 def store_to_hadoop(**context) -> None:
     pass
