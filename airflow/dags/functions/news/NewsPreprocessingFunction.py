@@ -1,7 +1,7 @@
 import requests
 
-# domain: str = "70.12.247.100:8080"
-domain: str = "host.docker.internal:8000"
+domain: str = "70.12.247.100:8080"
+
 
 def embedding_processing(**context):
     collected_data: list[dict] = context['task_instance'].xcom_pull(task_ids='collecting_data')
@@ -43,13 +43,6 @@ def summarization_processing(**context):
         raise Exception(response.status_code, response.json())
 
     return response.json()['data']
-
-
-def store_to_elastic_search(**context) -> None:
-    summarized_data: list = context['task_instance'].xcom_pull(task_ids='summarization_processing')
-
-    for data in summarized_data:
-        print(data)
 
 
 def store_to_hadoop(**context) -> None:

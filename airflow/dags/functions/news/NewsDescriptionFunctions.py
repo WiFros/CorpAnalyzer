@@ -63,4 +63,4 @@ def collecting_data(**context) -> list[dict]:
     for i in range(1, 6):
         result_data.extend(context['task_instance'].xcom_pull(task_ids=f"get_processed_articles_{i}"))
     
-    return result_data
+    return result_data[:100]

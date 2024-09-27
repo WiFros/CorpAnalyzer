@@ -7,6 +7,7 @@ from pendulum import datetime
 from functions.news import NewsCrawlingFunctions
 from functions.news import NewsDescriptionFunctions
 from functions.news import NewsPreprocessingFunction
+from comm.elastic_search import ElasticSearchFunction
 
 default_args: dict = {
     'owner': 'airflow',
@@ -20,7 +21,6 @@ with (DAG(
         start_date=datetime(2021, 11, 1),
         schedule="@once",
         catchup=False,
-        default_args=default_args
 ) as dag):
     init_data = PythonOperator(
         task_id='init_data',
@@ -99,7 +99,7 @@ with (DAG(
 
     store_to_elastic_search = PythonOperator(
         task_id='store_to_elastic_search',
-        python_callable=NewsPreprocessingFunction.store_to_elastic_search,
+        python_callable=ElasticSearchFunction.store_to_elastic_search,
         dag=dag,
     )
 

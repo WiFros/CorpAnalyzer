@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  namenode01:
+    image: kdh610/hadoop-namenode
+    container_name: namenode01
+    hostname: namenode01
+    ports:
+      - "9870:9870"
+      - "8088:8088"
+      - "9000:9000"
+    volumes: 
+      - /hadoop/etc:/etc/hosts
+
+    tty: true
+    stdin_open: true
