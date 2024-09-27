@@ -20,6 +20,7 @@ with (DAG(
         start_date=datetime(2021, 11, 1),
         schedule="@once",
         catchup=False,
+        default_args=default_args
 ) as dag):
     init_data = PythonOperator(
         task_id='init_data',
