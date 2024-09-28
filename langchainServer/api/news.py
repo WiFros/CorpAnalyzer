@@ -1,37 +1,39 @@
-from fastapi import APIRouter, HTTPException
-from schemas.embedding import EmbeddingResponse, EmbeddingBatchResponse
-from models.embedding import dedup
-from schemas.request import NewsItem, NewsBatchRequest
+from fastapi import APIRouter
+from models.news import news_summarization
 from typing import List
+from langchain_core.output_parsers import PydanticOutputParser
+from schemas.langchain.news.news_schema import CompanySummary
+from data.elasticsearchclient import ESclient
+from utils.news_util import company_summary_to_json
 import pandas as pd
+import json
 
 router = APIRouter()
 
-@router.post("", response_model=EmbeddingBatchResponse)
-async def get_embeddings(request: List[NewsItem]):
-    # Example data
-    news_items = request
-    # convert from json to pandas df
-    df_pandas = pd.DataFrame([item.dict() for item in news_items])    
-    deduf_df = dedup(df_pandas)
-    
-    res = []
-    for _, row in deduf_df.iterrows():
-        # Row 객체를 딕셔너리로 변환
-        res.append(
-            EmbeddingResponse(
-                title=  row.title,
-                description= row.description,
-                pubDate = row.pubDate,
-                link = row.link,
-            )
-)
+@router.get("", response_model=CompanySummary)
+async def summarize_news_move(company_name: str = "", index_name: str = "" ):
+    ESc = ESclient()
+    print(company_name, index_name)
+    # Fetch data from Elasticsearch
+    search_query = {
+    "query" :{
+                "match" : {
+            "company_names" : f"{company_name}"
+        }
+    },
+    "size" : 50, # 최대 가져오는 뉴스 수
+    "min_score" : 1.5, # 스코어 필터링
+}
+    result = ESc.adv_search(index_name, search_query)['hits']['hits']
 
-
-    response = EmbeddingBatchResponse(
-        status="success",
-        message="Successfully deleted duplicates.",
-        data= res
-    )
+    # send res(or rerank documents) to models
+    news_result = news_summarization(company_name, result)
     
+    # convert news_result in string with certain format to 
+    parser = PydanticOutputParser(pydantic_object= CompanySummary)
+    response = parser.parse(news_result)
+    formatted_response = company_summary_to_json(response)
+    with open('output.json', 'w', encoding='utf-8') as f:
+        json.dump(formatted_response, f, ensure_ascii = False, indent = 4)
+
     return response

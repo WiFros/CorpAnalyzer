@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from api import summarization, ner, embedding, news, dart
-from api import preprocessing
+from api import  news, dart
 import warnings
 # warning 무시
 warnings.filterwarnings('ignore')
