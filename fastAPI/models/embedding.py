@@ -4,10 +4,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from schemas.request import NewsItem, NewsBatchRequest
 from schemas.embedding import EmbeddingResponse, EmbeddingBatchResponse
 from sklearn.cluster import DBSCAN
-from pyspark.sql import SparkSession,DataFrame
-from pyspark.sql.types import StructType, StructField,ArrayType, StringType, FloatType
-from pyspark.sql.functions import col, udf
-from fastapi import Depends
+from tqdm import tqdm
 import numpy as np 
 import pandas as pd
 import gc
@@ -27,18 +24,23 @@ def dedup(text: pd.DataFrame)->pd.DataFrame:
     import torch
 
     # df_dedup = text.withColumn("embeddings", embedding_udf(col("title")))
-    tokenizer = AutoTokenizer.from_pretrained("intfloat/multilingual-e5-large-instruct")
-    model = AutoModel.from_pretrained("intfloat/multilingual-e5-large-instruct").to('cuda')
+    # model_name = "intfloat/multilingual-e5-large-instruct"
+    model_name = "monologg/kobigbird-bert-base"
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name).to('cuda').half()
 
     print("before dedup" , text.shape[0])
     embeddings_list = []
-    for _, row in text.iterrows():
+    for _, row in tqdm(text.iterrows(), total = len(text) , desc = "dedup"):
         with torch.no_grad():
             inputs = tokenizer(row['description'], return_tensors= 'pt',  # 최대 길이 설정
     truncation=True).to('cuda')
             output = model(**inputs).last_hidden_state
             output = torch.nn.functional.normalize(output,p=2,dim=2).mean(1)
         embeddings_list.append(output.detach().cpu().numpy().tolist()[0])
+        torch.cuda.empty_cache()
+
     model.to("cpu")
     torch.cuda.empty_cache()
     del model
@@ -56,7 +58,8 @@ def dedup(text: pd.DataFrame)->pd.DataFrame:
 
 
     # stpe 2 : DBSCAN으로 확실하게 중복제거.
-    dbsc = DBSCAN(eps=0.2, min_samples=1).fit(embeddings_list)
+    # dbsc = DBSCAN(eps=0.2, min_samples=1).fit(embeddings_list)
+    dbsc = DBSCAN(eps=0.08, min_samples=1).fit(embeddings_list)
     labels = dbsc.labels_
     deduped_rows = []
     all_duped_art = []
