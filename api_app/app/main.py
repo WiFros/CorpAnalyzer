@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+from app.services.company_search import CompanySearchService
+
+app = FastAPI()
+company_search_service = None
+
+@app.on_event("startup")
+async def startup_event():
+    global company_search_service
+    company_search_service = CompanySearchService()
+    await company_search_service.initialize_trie()
+
 from app.api import companies
-
-app = FastAPI(title="Company API", description="API for querying company information")
-
-app.include_router(companies.router, prefix="/api/v1", tags=["companies"])
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+app.include_router(companies.router, prefix="/api/companies", tags=["companies"])

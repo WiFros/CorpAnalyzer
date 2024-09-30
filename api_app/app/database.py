@@ -1,6 +1,12 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 from app.core.config import settings
 
-client = MongoClient(settings.MONGO_URI)
-db = client[settings.DB_NAME]
-collection = db[settings.COLLECTION_NAME]
+client = AsyncIOMotorClient(settings.MONGO_URI)
+database = client[settings.DB_NAME]
+collection = database[settings.COLLECTION_NAME]
+
+async def get_database():
+    return database
+
+async def get_collection():
+    return collection
