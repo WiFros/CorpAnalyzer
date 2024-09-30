@@ -1,7 +1,7 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    MONGO_URI: str = "mongodb://localhost:27017/"
+    MONGO_URI: str = "mongodb://host.docker.internal:27017/"
     DB_NAME: str = "company_db"
     COLLECTION_NAME: str = "companies"
 
