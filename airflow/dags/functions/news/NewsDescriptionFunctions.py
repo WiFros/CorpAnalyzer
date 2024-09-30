@@ -18,11 +18,14 @@ def get_processed_article(group_number: int, **context) -> list[dict]:
         link: str = news_info['link']
         request_url: str = link.replace('\\', '')
 
-        result_data: dict = _get_description_from_html(_get_html_from_news_info(request_url))
-        result_data['pubDate'] = news_info['pubDate']
-        result_data['link'] = request_url
+        try:
+            result_data: dict = _get_description_from_html(_get_html_from_news_info(request_url))
+            result_data['pubDate'] = news_info['pubDate']
+            result_data['link'] = request_url
+            result_list.append(result_data)
+        except:
+            continue
 
-        result_list.append(result_data)
 
     return result_list
 
@@ -55,14 +58,9 @@ def _get_description_from_html(response: Response) -> dict:
 
     return {"title": result_title, "description": result_description.strip()}
 
-def print_result(**context) -> None:
+def collecting_data(**context) -> list[dict]:
     result_data: list[dict] = []
     for i in range(1, 6):
         result_data.extend(context['task_instance'].xcom_pull(task_ids=f"get_processed_articles_{i}"))
     
-    tmp_data: list[dict] = result_data
-    
-    session = requests.Session()
-    session.post("http://host.docker.internal:8000/preprocess/", json=tmp_data)
-
-    #print(json.dumps(result_data, ensure_ascii=False))
+    return result_data[:100]

@@ -1,0 +1,13 @@
+version: '3'
+services:
+  datanode02:
+    image: kdh610/hadoop-datanode
+    container_name: datanode02
+    hostname: datanode02
+    ports:
+      - "9864:9864"
+      - "9867:9867"
+    volumes: 
+      - /hadoop/etc/hosts:/etc/hosts
+    tty: true
+    stdin_open: true
