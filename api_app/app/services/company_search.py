@@ -1,20 +1,21 @@
 from app.utils.compressed_trie import CompressedTrie
-from app.database import get_database
 from app.models.company import Company
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 class CompanySearchService:
-    def __init__(self):
+    def __init__(self, db: AsyncIOMotorDatabase):
+        self.db = db
         self.trie = CompressedTrie()
 
     async def initialize_trie(self):
-        db = await get_database()
-        async for company in db.companies.find({}, {"corp_code": 1, "corp_name": 1, "_id": 0}):
-            self.trie.insert(company['corp_name'].lower(), {
-                'corp_code': company['corp_code'],
-                'corp_name': company['corp_name']
-            })
+        if not self.trie.root.children:  # Only initialize if not already initialized
+            async for company in self.db.companies.find({}, {"corp_code": 1, "corp_name": 1, "_id": 0}):
+                self.trie.insert(company['corp_name'].lower(), {
+                    'corp_code': company['corp_code'],
+                    'corp_name': company['corp_name']
+                })
 
-    def search_companies(self, query: str, search_type: str = 'prefix', page: int = 1, page_size: int = 10):
+    async def search_companies(self, query: str, search_type: str = 'prefix', page: int = 1, page_size: int = 10):
         if search_type == 'prefix':
             results = self.trie.search_prefix(query.lower())
         elif search_type == 'substring':
