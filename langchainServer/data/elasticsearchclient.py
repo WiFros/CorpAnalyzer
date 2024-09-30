@@ -12,51 +12,27 @@ class ESclient:
             self.client = Elasticsearch("http://localhost:9200")
         else :
             self.client = Elasticsearch(path)
-        self.schmeas = {
-            "news_docs": SumResponse
-        }
+
 
     def get_info(self,):
         return self.client.info()
     
-    def validate_data(self, index_name, data):
-
-        sc_class= self.schmeas.get(index_name)
-        if not sc_class:
-            raise ValueError(f"Index {index_name} doesn't exist")
-
-        try:
-            # Pydantic을 이용해 검증
-            if isinstance(data, sc_class):
-                return True, data
-            
-            sc_class(**data)
-            return True, data
-        except ValidationError as e:
-            # print(f"Validation error: {e}")
-            return False, data
         
     def index_docs(self, index_name ,docs):
         # Create도 됨.
         
         valid_list = []
-        invalid_list = []
-
+        
         for doc in docs:
-            is_valid, doc = self.validate_data(index_name,doc)
+    
+            valid_list.append(doc.dict())
 
-            if is_valid:
-                valid_list.append(doc.dict())
-            else :
-                invalid_list.append(doc.dict())
         
         if valid_list:
             self.bulk_index(index_name,valid_list)
         
         return {
             "indexed_count": len(valid_list),
-            "invalid_count": len(invalid_list),
-            "invalid_data": invalid_list
         }
     
     def bulk_index(self, index_name ,docs):
@@ -70,7 +46,7 @@ class ESclient:
                             "description" : doc["description"],
                             "company_names" : doc["company_names"],
                             "summary" : doc["summary"],
-                            "pubDate" : doc["pubDate"],
+                            "published_date" : doc["published_date"],
                             "link" : doc["link"]
 
                         }
@@ -79,6 +55,24 @@ class ESclient:
 
         helpers.bulk(self.client,queries)
 
+    def search(self, index_name, query,size = 30):
+        # index_name에서 query를 사용해 데이터 return
+        resp = self.client.search(index = index_name,
+                                  query = query,
+                                  size = size,
+                                  )
+        
+        return resp
+    
+    def adv_search(self, index_name, body):
+    # index_name에서 body를 사용해 데이터 return
+        resp = self.client.search(index = index_name,
+                                body = body)
+    
+        return resp
+
+
+    
 
 
     
