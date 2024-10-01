@@ -14,7 +14,6 @@ Instrumentator().instrument(app).expose(app)
 
 # Include the router
 app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
-
 # Optional: Add a root endpoint
 @app.get("/")
 async def root():

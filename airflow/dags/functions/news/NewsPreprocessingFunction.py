@@ -1,7 +1,7 @@
 import requests
 
-domain: str = "70.12.247.100:8080"
-
+#domain: str = "70.12.247.100:8080"
+domain: str = "host.docker.internal:8000"
 
 def embedding_processing(**context):
     collected_data: list[dict] = context['task_instance'].xcom_pull(task_ids='collecting_data')
