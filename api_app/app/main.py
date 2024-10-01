@@ -1,69 +1,42 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-import httpx
-from app.config import settings
+# app/main.py
 
-app = FastAPI()
+from fastapi import FastAPI
+from app.api.companies import companies_router  # 여기를 수정했습니다
+from prometheus_fastapi_instrumentator import Instrumentator
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+app = FastAPI(
+    title="Company Search API",
+    description="An API for searching company information",
+    version="0.1.0"
 )
+Instrumentator().instrument(app).expose(app)
 
+
+# Include the router
+app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
+
+# Optional: Add a root endpoint
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the API Gateway"}
+    return {"message": "Welcome to the Company Search API"}
 
-@app.api_route("/news/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def news_route(request: Request, path: str):
-    client = httpx.AsyncClient(base_url=settings.NEWS_SERVICE_URL)
-    try:
-        response = await client.request(
-            method=request.method,
-            url=f"/{path}",
-            headers={key: value for (key, value) in request.headers.items() if key != "host"},
-            data=await request.body(),
-        )
-        return JSONResponse(
-            content=response.json(),
-            status_code=response.status_code,
-            headers=dict(response.headers)
-        )
-    except httpx.HTTPStatusError as exc:
-        return JSONResponse(
-            content={"detail": str(exc)},
-            status_code=exc.response.status_code
-        )
-    finally:
-        await client.aclose()
+# app/api/companies.py
 
-@app.api_route("/dart/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def dart_route(request: Request, path: str):
-    client = httpx.AsyncClient(base_url=settings.DART_SERVICE_URL)
-    try:
-        response = await client.request(
-            method=request.method,
-            url=f"/{path}",
-            headers={key: value for (key, value) in request.headers.items() if key != "host"},
-            data=await request.body(),
-        )
-        return JSONResponse(
-            content=response.json(),
-            status_code=response.status_code,
-            headers=dict(response.headers)
-        )
-    except httpx.HTTPStatusError as exc:
-        return JSONResponse(
-            content={"detail": str(exc)},
-            status_code=exc.response.status_code
-        )
-    finally:
-        await client.aclose()
+from fastapi import APIRouter, Query, Depends
+from app.services.company_search import CompanySearchService
+from app.models.company import CompanyList
+from app.database import get_database
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+companies_router = APIRouter()
+
+@companies_router.get("/search", response_model=CompanyList)
+async def search_companies(
+    query: str = Query(..., min_length=1),
+    search_type: str = Query("prefix", regex="^(prefix|substring)$"),
+    page: int = Query(1, ge=1),
+    db = Depends(get_database)
+):
+    company_search_service = CompanySearchService(db)
+    await company_search_service.initialize_trie()
+    results = await company_search_service.search_companies(query, search_type, page)
+    return CompanyList(**results)

@@ -1,8 +1,7 @@
 version: '3'
-
 services:
   api_app:
-    build: 
+    build:
       context: ./api_app
       dockerfile: Dockerfile
     ports:
@@ -10,38 +9,38 @@ services:
     environment:
       - DART_SERVICE_URL=${DART_SERVICE_URL:-http://dart_serv_app:8002}
       - NEWS_SERVICE_URL=${NEWS_SERVICE_URL:-http://news_serv_app:8001}
+      - MONGO_URI=${MONGO_URI:-mongodb://host.docker.internal:27017/}
+      - DB_NAME=${DB_NAME:-company_db}
+      - COLLECTION_NAME=${COLLECTION_NAME:-companies}
     volumes:
       - ./api_app:/api_app
-    command: python app/main.py
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-  dart_serv_app:
-    build: 
-      context: ./dart_serv_app
-      dockerfile: Dockerfile
-    ports:
-      - "8002:8002"
+  prometheus:
+    image: prom/prometheus:v2.55.0-rc.0
     volumes:
-      - ./dart_serv_app:/app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
 
-  news_serv_app:
-    build: 
-      context: ./news_serv_app
-      dockerfile: Dockerfile
+  grafana:
+    image: grafana/grafana:11.2.1
     ports:
-      - "8001:8001"
+      - "3000:3000"
     volumes:
-      - ./news_serv_app:/app
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  grafana-storage:
