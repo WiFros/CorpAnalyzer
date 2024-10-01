@@ -103,7 +103,7 @@ def summarization(text: pd.DataFrame) -> pd.DataFrame:
 
 
     torch.cuda.empty_cache()
-    del summ
+    del model
     # 2. pandas df에 새 칼럼 생성
     text["summary"] = summaries
 
