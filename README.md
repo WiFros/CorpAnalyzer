@@ -1,70 +1,67 @@
-# Getting Started with Create React App
+# 프로젝트 이름
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 소개
+이 프로젝트는 기업 데이터를 이용하여 분석하는 사이트를 제공합니다. 
+API 게이트웨이, 뉴스 서비스, DART 서비스로 구성된 마이크로서비스 아키텍처를 사용합니다.
 
-## Available Scripts
+## 사전 요구 사항
+- Docker
+- Docker Compose
+- NVIDIA GPU (dart_serv_app 및 news_serv_app용)
 
-In the project directory, you can run:
+## 설치 및 실행
+1. 저장소를 클론합니다:
+   ```
+   git clone [저장소 URL]
+   cd [프로젝트 디렉토리]
+   ```
+2. `.env.example`을 복사하여 `.env` 파일을 만들고 필요한 환경 변수를 설정합니다:
+   ```
+   cp .env.example .env
+   ```
+3. 다음 명령어로 서비스를 빌드하고 실행합니다:
+   ```
+   docker-compose up --build
+   ```
 
-### `npm start`
+## 서비스 설명
+- api_app (포트 8000): API 게이트웨이
+- news_serv_app (포트 8001): 뉴스 처리 서비스
+- dart_serv_app (포트 8002): DART 데이터 처리 서비스
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## API 사용 방법
+[API 엔드포인트와 사용 예시를 여기에 추가하세요]
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Git Hooks 설정
 
-### `npm test`
+이 프로젝트는 일관된 코드 품질과 커밋 메시지 형식을 유지하기 위해 Git hooks를 사용합니다. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 자동 설정
 
-### `npm run build`
+프로젝트를 클론하고 pull을 받을 때마다 Git hooks가 자동으로 설정되고 업데이트됩니다. 별도의 설정이 필요하지 않습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 수동 설정 (필요한 경우)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+만약 Git hooks가 자동으로 설정되지 않았다면, 다음 명령어를 실행하여 수동으로 설정할 수 있습니다:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+bash setup-git-hooks.sh
+```
 
-### `npm run eject`
+### 커밋 메시지 규칙
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+모든 커밋 메시지는 다음 형식을 따라야 합니다:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+type: subject
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- `type`은 다음 중 하나여야 합니다: feat, fix, docs, style, refactor, test, chore, init
+- `subject`는 변경사항에 대한 간단한 설명이어야 하며, 50자를 넘지 않아야 합니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+예시:
+- `feat: 사용자 로그인 기능 추가`
+- `fix: 홈페이지 로딩 속도 개선`
+- `docs: README 파일 업데이트`
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+이 규칙을 따르지 않는 커밋은 자동으로 거부됩니다.
