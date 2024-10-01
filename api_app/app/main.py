@@ -1,13 +1,16 @@
 # app/main.py
 
 from fastapi import FastAPI
-from app.api.companies import router as companies_router
+from app.api.companies import companies_router  # 여기를 수정했습니다
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(
     title="Company Search API",
     description="An API for searching company information",
     version="0.1.0"
 )
+Instrumentator().instrument(app).expose(app)
+
 
 # Include the router
 app.include_router(companies_router, prefix="/api/companies", tags=["companies"])

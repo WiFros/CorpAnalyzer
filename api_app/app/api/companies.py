@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Query, Depends
+# app/api/companies.py
+
+from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.company_search import CompanySearchService
 from app.models.company import CompanyList
 from app.database import get_database
 
-router = APIRouter()
+companies_router = APIRouter()
 
-@router.get("/search", response_model=CompanyList)
+@companies_router.get("/search", response_model=CompanyList)
 async def search_companies(
     query: str = Query(..., min_length=1),
     search_type: str = Query("prefix", regex="^(prefix|substring)$"),
@@ -13,6 +15,8 @@ async def search_companies(
     db = Depends(get_database)
 ):
     company_search_service = CompanySearchService(db)
-    await company_search_service.initialize_trie()
-    results = await company_search_service.search_companies(query, search_type, page)
-    return CompanyList(**results)
+    try:
+        results = await company_search_service.search_companies(query, search_type, page)
+        return CompanyList(**results)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
