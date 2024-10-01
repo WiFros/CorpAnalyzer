@@ -11,7 +11,11 @@ class ESclient:
         if (path is None):
             self.client = Elasticsearch("http://localhost:9200")
         else :
-            self.client = Elasticsearch(path)
+            self.client = Elasticsearch(
+                hosts="https://j11a606.p.ssafy.io:9200",
+                verify_certs=False,
+                basic_auth=("elastic", "ssafya606")
+            )
 
     def get_info(self,):
         return self.client.info()
