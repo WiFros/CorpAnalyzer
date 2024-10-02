@@ -9,9 +9,6 @@ services:
     environment:
       - DART_SERVICE_URL=${DART_SERVICE_URL:-http://dart_serv_app:8002}
       - NEWS_SERVICE_URL=${NEWS_SERVICE_URL:-http://news_serv_app:8001}
-      - MONGO_URI=${MONGO_URI:-mongodb://host.docker.internal:27017/}
-      - DB_NAME=${DB_NAME:-company_db}
-      - COLLECTION_NAME=${COLLECTION_NAME:-companies}
     volumes:
       - ./api_app:/api_app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload

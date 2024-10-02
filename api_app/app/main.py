@@ -1,17 +1,27 @@
-# app/main.py
-
-from fastapi import FastAPI
-from app.api.companies import companies_router
-from prometheus_fastapi_instrumentator import Instrumentator
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.companies import companies_router
+from app.core.config import settings
+from app.db.mongo import connect_to_mongo, close_mongo_connection
+from prometheus_fastapi_instrumentator import Instrumentator
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Connect to the database
+    await connect_to_mongo()
+    yield
+    # Shutdown: Close the database connection
+    await close_mongo_connection()
 
 app = FastAPI(
     title="Company Search API",
     description="An API for searching company information",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
 
-# CORS 미들웨어 추가
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,16 +31,25 @@ app.add_middleware(
     allow_origin_regex="https?://localhost(:\d+)?",
 )
 
-# Prometheus 설정
-#Instrumentator().instrument(app).expose(app)
+# Uncomment to enable Prometheus
+# Instrumentator().instrument(app).expose(app)
 
-# 라우터 포함
 app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
 
-# 루트 엔드포인트
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An unexpected error occurred."}
+    )
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the Company Search API"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     import uvicorn
