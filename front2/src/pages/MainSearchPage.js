@@ -14,6 +14,14 @@ const MainSearchPage = () => {
   const observer = useRef();
   const navigate = useNavigate();
 
+  const handleCompanyClick = async function(company) {
+    console.log("Navigating to company page for:", company.company_name);
+    if (company && company.company_id) {
+      navigate(`/company/${company.company_id}`, { state: { company } });
+    } else {
+      console.error("Company object is invalid or missing required properties");
+    }
+  };
   const lastCompanyElementRef = useCallback(node => {
     if (isLoading) return;
     if (observer.current) observer.current.disconnect();
@@ -35,7 +43,7 @@ const MainSearchPage = () => {
     setError(null);
 
     try {
-      const response = await axiosInstance.get("http://localhost:8000/api/companies/search", {
+      const response = await axiosInstance.get("/api/companies/search", {
         params: {
           query: query,
           search_type: "prefix",
@@ -79,10 +87,6 @@ const MainSearchPage = () => {
     }
   }, [page, searchTerm, fetchResults]);
 
-  const handleCompanyClick = (companyId) => {
-    navigate(`/company/${companyId}`);
-  };
-
   return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <h1 className="text-4xl font-sans font-bold mb-8">기업 검색</h1>
@@ -105,12 +109,12 @@ const MainSearchPage = () => {
                     key={company.company_id}
                     ref={index === searchResults.length - 1 ? lastCompanyElementRef : null}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleCompanyClick(company.company_id)}
+                    onClick={() => handleCompanyClick(company)}
                 >
                   {company.company_name}
                 </div>
             ))}
-            {isLoading && <Spinner className="m-2" />}
+            {isLoading && <Spinner className="m-2"/>}
           </div>
         </div>
       </div>

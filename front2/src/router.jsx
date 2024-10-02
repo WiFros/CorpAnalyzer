@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "./components/Layout"; // Layout 컴포넌트 임포트
+import Layout from "./components/Layout";
 import MainSearchPage from "./pages/MainSearchPage";
 import CompanyPage from "./pages/CompanyPage";
 import CompanyInfoPage from "./pages/CompanyInfoPage";
@@ -10,7 +10,7 @@ import CompanyFinancialPage from "./pages/CompanyFinancialPage";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />, // Layout으로 감싸줌
+    element: <Layout />,
     children: [
       {
         path: "",
