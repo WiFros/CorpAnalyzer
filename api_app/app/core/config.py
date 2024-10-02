@@ -3,7 +3,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    MONGO_URI: str = "mongodb://admin:ssafya606@localhost:27017/admin"
+    MONGO_URI: str = "mongodb://admin:ssafya606@j11a606.p.ssafy.io:27017/"
     DB_NAME: str = "company_db"
     COLLECTION_NAME: str = "companies"
 
