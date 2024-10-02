@@ -1,41 +1,56 @@
-# app/main.py
-
-from fastapi import FastAPI
-from app.api.companies import companies_router  # 여기를 수정했습니다
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.companies import companies_router
+from app.core.config import settings
+from app.db.mongo import connect_to_mongo, close_mongo_connection
 from prometheus_fastapi_instrumentator import Instrumentator
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Connect to the database
+    await connect_to_mongo()
+    yield
+    # Shutdown: Close the database connection
+    await close_mongo_connection()
 
 app = FastAPI(
     title="Company Search API",
     description="An API for searching company information",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
-Instrumentator().instrument(app).expose(app)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_origin_regex="https?://localhost(:\d+)?",
+)
 
-# Include the router
+# Uncomment to enable Prometheus
+# Instrumentator().instrument(app).expose(app)
+
 app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
-# Optional: Add a root endpoint
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An unexpected error occurred."}
+    )
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the Company Search API"}
 
-# app/api/companies.py
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
-from fastapi import APIRouter, Query, Depends
-from app.services.company_search import CompanySearchService
-from app.models.company import CompanyList
-from app.database import get_database
-
-companies_router = APIRouter()
-
-@companies_router.get("/search", response_model=CompanyList)
-async def search_companies(
-    query: str = Query(..., min_length=1),
-    search_type: str = Query("prefix", regex="^(prefix|substring)$"),
-    page: int = Query(1, ge=1),
-    db = Depends(get_database)
-):
-    company_search_service = CompanySearchService(db)
-    await company_search_service.initialize_trie()
-    results = await company_search_service.search_companies(query, search_type, page)
-    return CompanyList(**results)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
