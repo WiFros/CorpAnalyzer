@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # Prometheus 설정
-Instrumentator().instrument(app).expose(app)
+#Instrumentator().instrument(app).expose(app)
 
 # 라우터 포함
 app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
