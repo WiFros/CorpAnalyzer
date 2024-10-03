@@ -14,56 +14,86 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from schemas.dart_analyze import ReportSchema  # Pydantic 클래스 가져오기
 from dotenv import load_dotenv
+import time
+
+# 시간을 측정하는 함수
+def measure_process_time(start_time, process_name):
+    end_time = time.time()
+    print(f"{process_name} 소요 시간: {end_time - start_time:.2f}초")
+    return time.time()  # 다음 작업 시작 시간 반환
+
 
 # 환경 변수 로드
 load_dotenv()
 
 # 텍스트 정제를 위한 함수
 def clean_text(text):
-    text = text.replace('|n', '')
-    text = re.sub(r'\.{2,}', '.', text)
-    return " ".join(text.split())
-
-# HTML 파일을 처리하는 함수
-async def process_html(file):
-    # HTML 파일에서 텍스트 추출
-    contents = await file.read()  # 비동기 작업 대기
-    decoded_contents = contents.decode('utf-8')  # 바이트를 문자열로 변환
-    soup = BeautifulSoup(decoded_contents, "html.parser")
+    # 1. HTML 태그 제거
+    soup = BeautifulSoup(text, "html.parser")
     text = soup.get_text()
-    cleaned_text = clean_text(text)
-    return cleaned_text
 
-# PDF 파일을 처리하는 함수
-def process_pdf(file):
-    docs = []
-    with pdfplumber.open(file.file) as pdf:
-        for i in range(len(pdf.pages)):
-            page = pdf.pages[i]
-            text = page.extract_text()
-            cleaned_text = clean_text(text)
-            doc = Document(page_content=cleaned_text, metadata={"page": i})
-            docs.append(doc)
-    return docs
+    # 2. |n 등의 잘못된 줄바꿈 문자 제거
+    text = text.replace('|n', '').replace('\n', '').replace('\r', '')
 
-# 파일을 분석하는 함수 (PDF와 HTML 처리)
-async def process_rag(file, company_name):
-    # 파일 타입을 확인하여 PDF 또는 HTML로 처리
-    docs = []
-    if file.content_type == "application/pdf":
-        # PDF 파일 처리
-        docs = process_pdf(file)
-    elif file.content_type == "text/html":
-        # HTML 파일 처리
-        html_content = await process_html(file)
-        doc = Document(page_content=html_content, metadata={"file": file.filename})
-        docs.append(doc)
-    else:
-        raise ValueError("지원하지 않는 파일 형식입니다. PDF 또는 HTML 파일만 지원됩니다.")
+    # 3. 여러 개의 마침표(...)를 하나로 축소
+    text = re.sub(r'\.{2,}', '.', text)
+
+    # 4. 여러 개의 공백을 하나로 축소
+    text = " ".join(text.split())
+
+    # 5. 불필요한 특수 문자 제거 (예시: @, # 등)
+    text = re.sub(r'[^\w\s.,]', '', text)
+
+    return text
+
+# # HTML 파일을 처리하는 함수
+# async def process_html(file):
+#     # HTML 파일에서 텍스트 추출
+#     contents = await file.read()  # 비동기 작업 대기
+#     decoded_contents = contents.decode('utf-8')  # 바이트를 문자열로 변환
+#     soup = BeautifulSoup(decoded_contents, "html.parser")
+#     text = soup.get_text()
+#     cleaned_text = clean_text(text)
+#     return cleaned_text
+
+# # PDF 파일을 처리하는 함수
+# def process_pdf(file):
+#     docs = []
+#     with pdfplumber.open(file.file) as pdf:
+#         for i in range(len(pdf.pages)):
+#             page = pdf.pages[i]
+#             text = page.extract_text()
+#             cleaned_text = clean_text(text)
+#             doc = Document(page_content=cleaned_text, metadata={"page": i})
+#             docs.append(doc)
+#     return docs
+
+# 파일을 분석하는 함수 (dart_data 처리)
+async def process_rag(dart_data, company_name):
+    # # 파일 타입을 확인하여 PDF 또는 HTML로 처리
+    # docs = []
+    # if file.content_type == "application/pdf":
+    #     # PDF 파일 처리
+    #     docs = process_pdf(file)
+    # elif file.content_type == "text/html":
+    #     # HTML 파일 처리
+    #     html_content = await process_html(file)
+    #     doc = Document(page_content=html_content, metadata={"file": file.filename})
+    #     docs.append(doc)
+    # else:
+    #     raise ValueError("지원하지 않는 파일 형식입니다. PDF 또는 HTML 파일만 지원됩니다.")
+
+    start_time = time.time()
+
+    # 문서 전처리
+    dart_data = await dart_data
+    cleaned_data = clean_text(dart_data)
 
     # 문서 분할
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    split_documents = text_splitter.split_documents(docs)
+    split_texts = text_splitter.split_text(cleaned_data)
+
+    start_time = measure_process_time(start_time, "전처리")
 
     # GPU 장치 설정 - GPU 사용 시
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -75,8 +105,10 @@ async def process_rag(file, company_name):
         model_kwargs={"device": "cpu"}, # GPU 설정해도 되는데 200청크 이내 cpu로 해도 큰 차이 없을 듯??(뇌피셜)
         encode_kwargs={"normalize_embeddings": True},
     )
-    vectorstore = FAISS.from_documents(documents=split_documents, embedding=embeddings)
+    vectorstore = FAISS.from_texts(texts=split_texts, embedding=embeddings)
     retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 5})
+
+    start_time = measure_process_time(start_time, "임베딩")
 
     # 프롬프트 생성
     prompt = PromptTemplate.from_template(
@@ -120,9 +152,11 @@ async def process_rag(file, company_name):
     # 항목별로 딕셔너리 생성하여 반환
     report = ReportSchema(
         company_name=company_name,
-        business_overview=results[0]['answer'],
-        products_and_sales=results[1]['answer'],
-        contracts_and_rnd=results[2]['answer']
+        report_data={
+        "business_overview": results[0]['answer'],
+        "products_and_sales": results[1]['answer'],
+        "contracts_and_rnd": results[2]['answer']
+    }
     )
 
     return report

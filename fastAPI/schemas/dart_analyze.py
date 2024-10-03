@@ -23,7 +23,5 @@ class FileUploadSchema(BaseModel):
 
 class ReportSchema(BaseModel):
     company_name : str
-    business_overview : str
-    products_and_sales : str
-    contracts_and_rnd : str
+    report_data: dict
 
