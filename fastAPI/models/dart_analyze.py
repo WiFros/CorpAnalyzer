@@ -1,4 +1,4 @@
-import pdfplumber
+
 import re
 import torch
 from bs4 import BeautifulSoup
@@ -102,7 +102,7 @@ async def process_rag(dart_data, company_name):
     model_name = "intfloat/multilingual-e5-large-instruct"
     embeddings = HuggingFaceEmbeddings(
         model_name=model_name,
-        model_kwargs={"device": "cpu"}, # GPU 설정해도 되는데 200청크 이내 cpu로 해도 큰 차이 없을 듯??(뇌피셜)
+        model_kwargs={"device": "cuda"}, # GPU 설정해도 되는데 200청크 이내 cpu로 해도 큰 차이 없을 듯??(뇌피셜)
         encode_kwargs={"normalize_embeddings": True},
     )
     vectorstore = FAISS.from_texts(texts=split_texts, embedding=embeddings)
@@ -140,8 +140,8 @@ async def process_rag(dart_data, company_name):
     # 여러 개의 질문을 정의하고 답변을 추출
     questions = [
         f"{company_name} 주요 사업 내용을 문서에서 찾아서 상세히 알려줘",
-        f"{company_name} 주요 제품 및 서비스 매출을 상세히 알려줘",
-        f"{company_name} 주요 계약 및 연구개발활동을 상세히 알려줘"
+        f"{company_name} 주요 제품 및 서비스를 상세히 알려줘",
+        f"{company_name} 주요계약 및 연구개발활동을 상세히 알려줘"
     ]
 
     results = []
