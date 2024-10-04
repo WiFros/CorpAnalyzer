@@ -7,10 +7,10 @@ const TextSphere = ({ keywords }) => {
   useEffect(() => {
     if (containerRef.current && keywords.length > 0) {
       const container = containerRef.current;
-      container.innerHTML = '';
+      container.innerHTML = "";
 
       const options = {
-        radius: 300,
+        radius: 270,
         maxSpeed: "fast",
         initSpeed: "normal",
         keep: true,
@@ -21,15 +21,15 @@ const TextSphere = ({ keywords }) => {
 
     return () => {
       if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+        containerRef.current.innerHTML = "";
       }
     };
   }, [keywords]);
 
   return (
-      <div className="text-sphere">
-        <span ref={containerRef} className="tagcloud"></span>
-      </div>
+    <div className="text-shpere">
+      <span ref={containerRef} className="tagcloud"></span>
+    </div>
   );
 };
 
