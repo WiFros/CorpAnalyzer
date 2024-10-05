@@ -43,11 +43,10 @@ async def company_summary(
    company_name: str,
    db = Depends(get_database)
 ):
-    print("컨트롤러: ", company_name)
+
     news_summary_service = NewsSummaryService(db)
     try:
         result = await news_summary_service.summary_news(company_name)
-        print('result: ',result)
         if result:
             return CompanyResult(**result[0])
     except ValueError as e:
