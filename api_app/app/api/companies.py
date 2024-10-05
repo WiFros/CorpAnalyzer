@@ -3,9 +3,11 @@
 from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.company_search import CompanySearchService
 from app.services.hotKeyword_search import hotKeywordService
-from app.models.company import CompanyList
+from app.services.news_summary import NewsSummaryService
+from app.models.company import CompanyList, CompanyResult
 from app.models.hotkeyword import KeywordList
 from app.database import get_database
+
 
 companies_router = APIRouter()
 
@@ -32,5 +34,21 @@ async def company_hotkeyword(
     try:
         results = await hotkeyword_service.fetch_hotkeyword()
         return KeywordList(**results)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@companies_router.get("/news/{company_name}", response_model=CompanyResult)
+async def company_summary(
+   company_name: str,
+   db = Depends(get_database)
+):
+    print("컨트롤러: ", company_name)
+    news_summary_service = NewsSummaryService(db)
+    try:
+        result = await news_summary_service.summary_news(company_name)
+        print('result: ',result)
+        if result:
+            return CompanyResult(**result[0])
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
