@@ -14,3 +14,19 @@ class CompanyList(BaseModel):
     page: int
     total_pages: int
 
+
+
+
+class Move(BaseModel):
+    field: str
+    current_activity: List[str]
+
+class Result(BaseModel):
+    title: str
+    move: List[Move]
+    summary: str
+
+class CompanyResult(BaseModel):
+    _id: str
+    result: Result
+    company_name: str
