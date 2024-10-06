@@ -150,13 +150,11 @@ async def process_rag(dart_data, company_name):
         results.append({"question": question, "answer": response})
 
     # 항목별로 딕셔너리 생성하여 반환
-    report = ReportSchema(
-        company_name=company_name,
-        report_data={
+    report ={
         "business_overview": results[0]['answer'],
         "products_and_sales": results[1]['answer'],
         "contracts_and_rnd": results[2]['answer']
     }
-    )
+    
 
     return report
