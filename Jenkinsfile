@@ -25,15 +25,20 @@ pipeline {
             stages {
                 stage('Setup Environment') {
                     steps {
-                        dir("${FRONTEND_DIR}") {
-                            script {
-                                withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {
-                                    sh "cp \$ENV_FILE .env"
-                                }
+                        script {
+                            // 현재 작업 디렉토리 확인
+                            sh "pwd"
+                            // front 디렉토리 존재 확인 및 내용 리스트
+                            sh "ls -la ${FRONTEND_DIR}"
+                            
+                            // 환경 파일 복사
+                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {
+                                sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
+                                // 복사 후 확인
+                                sh "ls -la ${FRONTEND_DIR}/.env"
                             }
                         }
                     }
-                }
 
                 stage('Install Dependencies') {
                     steps {
