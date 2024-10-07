@@ -31,5 +31,4 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 EXPOSE 8000
 
 # 애플리케이션 실행
-#CMD ["python", "app/main.py"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["python", "app/main.py"]
