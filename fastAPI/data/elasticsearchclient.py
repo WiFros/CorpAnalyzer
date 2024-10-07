@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 from typing import Dict
 from schemas.elasticsearch.request import NewsESSchema
+from schemas.summarization import SumResponse
 from pydantic import ValidationError
 
 class ESclient:
@@ -12,7 +13,7 @@ class ESclient:
         else :
             self.client = Elasticsearch(path)
         self.schmeas = {
-            "news_docs": NewsESSchema
+            "news_docs": SumResponse
         }
 
     def get_info(self,):
@@ -60,10 +61,6 @@ class ESclient:
     
     def bulk_index(self, index_name ,docs):
 
-        # queries = [
-        #     {"index" : {"_index": index_name}
-        #     }
-        # ]
         queries = []
         for doc in docs:
             operation = {
@@ -73,25 +70,15 @@ class ESclient:
                             "description" : doc["description"],
                             "company_names" : doc["company_names"],
                             "summary" : doc["summary"],
-                            "published_date" : doc["published_date"],
+                            "pubDate" : doc["pubDate"],
                             "link" : doc["link"]
 
                         }
             }
             queries.append(operation)
 
-        # queries = [{"index": {"_index": index_name}}] + [{ "_source": doc } for doc in docs]
-        # Bulk API call
-
-        # body = []
-
-        # for query, doc in zip(queries, documents):
-        #     body.append(query)
-        #     body.append(doc)
-        
-        # response = self.client.bulk(index= index_name, body = queries)
         helpers.bulk(self.client,queries)
-        # return response
+
 
 
     

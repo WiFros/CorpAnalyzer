@@ -1,10 +1,26 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-import httpx
-from app.config import settings
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.companies import companies_router
+from app.core.config import settings
+from app.db.mongo import connect_to_mongo, close_mongo_connection
+from prometheus_fastapi_instrumentator import Instrumentator
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Connect to the database
+    await connect_to_mongo()
+    yield
+    # Shutdown: Close the database connection
+    await close_mongo_connection()
+
+app = FastAPI(
+    title="Company Search API",
+    description="An API for searching company information",
+    version="0.1.0",
+    lifespan=lifespan
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,57 +28,28 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex="https?://localhost(:\d+)?",
 )
+
+# Uncomment to enable Prometheus
+# Instrumentator().instrument(app).expose(app)
+
+app.include_router(companies_router, prefix="/api/companies", tags=["companies"])
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An unexpected error occurred."}
+    )
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the API Gateway"}
+    return {"message": "Welcome to the Company Search API"}
 
-@app.api_route("/news/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def news_route(request: Request, path: str):
-    client = httpx.AsyncClient(base_url=settings.NEWS_SERVICE_URL)
-    try:
-        response = await client.request(
-            method=request.method,
-            url=f"/{path}",
-            headers={key: value for (key, value) in request.headers.items() if key != "host"},
-            data=await request.body(),
-        )
-        return JSONResponse(
-            content=response.json(),
-            status_code=response.status_code,
-            headers=dict(response.headers)
-        )
-    except httpx.HTTPStatusError as exc:
-        return JSONResponse(
-            content={"detail": str(exc)},
-            status_code=exc.response.status_code
-        )
-    finally:
-        await client.aclose()
-
-@app.api_route("/dart/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def dart_route(request: Request, path: str):
-    client = httpx.AsyncClient(base_url=settings.DART_SERVICE_URL)
-    try:
-        response = await client.request(
-            method=request.method,
-            url=f"/{path}",
-            headers={key: value for (key, value) in request.headers.items() if key != "host"},
-            data=await request.body(),
-        )
-        return JSONResponse(
-            content=response.json(),
-            status_code=response.status_code,
-            headers=dict(response.headers)
-        )
-    except httpx.HTTPStatusError as exc:
-        return JSONResponse(
-            content={"detail": str(exc)},
-            status_code=exc.response.status_code
-        )
-    finally:
-        await client.aclose()
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 if __name__ == "__main__":
     import uvicorn
