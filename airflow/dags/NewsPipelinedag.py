@@ -8,6 +8,7 @@ from functions.news import NewsCrawlingFunctions
 from functions.news import NewsDescriptionFunctions
 from functions.news import NewsPreprocessingFunction
 from comm.elastic_search import ElasticSearchFunction
+from comm import LLMFunction
 
 default_args: dict = {
     'owner': 'airflow',
@@ -109,10 +110,23 @@ with (DAG(
         dag=dag,
     )
 
+    call_RAG = PythonOperator(
+        task_id='call_RAG',
+        python_callable=LLMFunction.call_RAG_server,
+        dag=dag,
+    )
+
+    store_to_mongo = PythonOperator(
+        task_id='store_to_mongo',
+        python_callable=LLMFunction.store_to_mongo,
+        dag=dag,
+    )
+
     init_data >> \
     parallel_read_file_tasks[0] >> parallel_crawl_news_tasks[0] >> parallel_filtering_news_tasks[0] >> \
     parallel_get_processed_article_tasks[0] >> collecting_data >> \
-    embedding_processing >> ner_processing >> summarization_processing >> [store_to_elastic_search, store_to_hadoop]
+    embedding_processing >> ner_processing >> summarization_processing >> [store_to_elastic_search,
+                                                                           store_to_hadoop] >> call_RAG >> store_to_mongo
 
     init_data >> parallel_read_file_tasks[1] >> parallel_crawl_news_tasks[1] >> parallel_filtering_news_tasks[1] >> \
     parallel_get_processed_article_tasks[1] >> collecting_data

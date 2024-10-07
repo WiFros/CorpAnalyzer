@@ -14,3 +14,24 @@ class CompanyList(BaseModel):
     page: int
     total_pages: int
 
+
+class News(BaseModel):
+    title:str
+    link:str
+
+
+
+class Move(BaseModel):
+    field: str
+    current_activity: List[str]
+
+class Result(BaseModel):
+    title: str
+    move: List[Move]
+    summary: str
+
+class CompanyResult(BaseModel):
+    _id: str
+    result: Result
+    company_name: str
+    news: List[News]

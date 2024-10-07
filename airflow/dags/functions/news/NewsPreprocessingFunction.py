@@ -1,7 +1,9 @@
 import requests
 
 #domain: str = "70.12.247.100:8080"
-domain: str = "host.docker.internal:8000"
+#domain: str = "70.12.114.101:8080"
+domain: str = "218.235.71.63:8080"
+
 
 def embedding_processing(**context):
     collected_data: list[dict] = context['task_instance'].xcom_pull(task_ids='collecting_data')
@@ -14,7 +16,6 @@ def embedding_processing(**context):
         raise Exception(response.status_code, response.json())
 
     result = response.json()['data']
-    print(result[0])
     print(type(result))
 
     return result
