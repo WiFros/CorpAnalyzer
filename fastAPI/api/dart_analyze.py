@@ -115,6 +115,22 @@ async def dart_analyze(company_name: str):
     return {f"'{company_name}' dart_report MongoDB 저장 완료"}
 
 
+@router.get("/dart_reports/{company_name}")
+async def get_dart_report(company_name: str):
+    try:
+        # 회사 이름으로 문서 조회
+        dart_report = await dart_collection.find_one({"company_name": company_name})
+        
+        if dart_report:
+            dart_report["_id"] = str(dart_report["_id"])  # ObjectId를 문자열로 변환
+            return {"status": "success", "data": dart_report}
+        else:
+            raise HTTPException(status_code=404, detail=f"'{company_name}'에 해당하는 데이터를 찾을 수 없습니다.")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"MongoDB에서 데이터를 가져오는 중 오류 발생: {str(e)}")
+
+
 # # Test3 - text_content 변수에 저장
 # @router.post("/mongoTest/")
 # async def get_files_by_corp_name1(corp_name: str):
