@@ -39,6 +39,7 @@ pipeline {
                             }
                         }
                     }
+                }
 
                 stage('Install Dependencies') {
                     steps {
