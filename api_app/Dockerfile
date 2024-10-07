@@ -16,7 +16,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 애플리케이션 코드 복사
-COPY ./app /api_app/app
+#COPY ./app /api_app/app
+COPY ./app ./app
+
 
 # PYTHONPATH 설정
 ENV PYTHONPATH=/api_app
@@ -29,4 +31,5 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 EXPOSE 8000
 
 # 애플리케이션 실행
-CMD ["python", "app/main.py"]
+#CMD ["python", "app/main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
