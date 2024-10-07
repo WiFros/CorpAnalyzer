@@ -9,7 +9,6 @@ import torch
 router = APIRouter()
 
 from gridfs import GridFSBucket
-import base64
 import time
 from datetime import datetime
 
@@ -32,23 +31,30 @@ def load_company_names(file_path):
         company_names = file.read().splitlines()
     return company_names
 
+# data.txt 파일 N번 회사까지 dart 보고서 LangChain 처리 후 MongoDB 저장
 @router.post("/multi/")
 async def process_multiple_companies(): # 반복 호출을 위한 함수
     company_names = load_company_names("data\data.txt")  # data.txt에서 회사 이름 로드
     results = []
 
-    for company_name in company_names[10:100]:  # 최대 N개의 회사 이름만 처리
+    for company_name in company_names[:200]:  # 최대 N개의 회사 이름만 처리
         try:
-            # dart_analyze 메서드 호출
-            result = await dart_analyze(company_name)
-            results.append(result)  # 결과를 리스트에 저장
+            # 회사 이름으로 문서 조회
+            dart_report = await dart_collection.find_one({"company_name": company_name})
+            if dart_report:
+                print(f"{company_name}")
+                continue
+            else:
+                # dart_analyze 메서드 호출
+                result = await dart_analyze(company_name)
+                results.append(result)  # 결과를 리스트에 저장
         except Exception as e:
             print(f"{company_name} 처리 중 오류 발생: {str(e)}")
     
     return results
 
-
-@router.post("/mongo/")
+# MongoDB 데이터 확인 테스트용
+# @router.post("/mongo/") 
 async def get_files_by_corp_name(corp_name: str):
     cursor = db['fs.files'].find({"metadata.corp_name": corp_name})
 
@@ -73,8 +79,8 @@ async def get_files_by_corp_name(corp_name: str):
     return text_content
 
 
-
-@router.post("/")
+# company_name dart 보고서 작성 후 mongoDB 저장
+@router.post("/single/")
 async def dart_analyze(company_name: str):
 
     start_time1 = time.time()  # 요청 처리 시작 시간
@@ -101,9 +107,9 @@ async def dart_analyze(company_name: str):
         )
 
         if result.matched_count > 0:
-            print(f"'{company_name}' 문서가 덮어쓰기되었습니다.")
+            print(f"'{company_name}' 문서가 덮어쓰기 되었습니다.")
         else:
-            print(f"'{company_name}' 새 문서가 삽입되었습니다.")
+            print(f"'{company_name}' 새 문서가 삽입 되었습니다.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"MongoDB 처리 중 오류 발생: {str(e)}")
 
@@ -114,7 +120,7 @@ async def dart_analyze(company_name: str):
 
     return {f"'{company_name}' dart_report MongoDB 저장 완료"}
 
-
+# Front에서 Dart 보고서 조회할 때 쓰는 API 
 @router.get("/dart_reports/{company_name}")
 async def get_dart_report(company_name: str):
     try:
