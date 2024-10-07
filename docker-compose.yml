@@ -10,7 +10,7 @@ services:
       - DART_SERVICE_URL=${DART_SERVICE_URL:-http://dart_serv_app:8002}
       - NEWS_SERVICE_URL=${NEWS_SERVICE_URL:-http://news_serv_app:8001}
     volumes:
-      - ./api_app/app:/api_app/app
+      - ./api_app:/api_app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - app-network
