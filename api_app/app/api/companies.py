@@ -5,8 +5,10 @@ from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.company_search import CompanySearchService
 from app.services.hotKeyword_search import hotKeywordService
 from app.services.news_summary import NewsSummaryService
-from app.models.company import CompanyList, CompanyResult
+from app.services.dart_report import DartReportService
+from app.models.company import CompanyList, CompanyResult, DartReportResponse
 from app.models.hotkeyword import KeywordList
+from app.db.mongo import get_dart_collection
 from app.database import get_database
 from hdfs import InsecureClient
 from bson import ObjectId
@@ -39,7 +41,6 @@ async def company_hotkeyword(
         return KeywordList(**results)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
 
 
 # @companies_router.get("/news/{company_name}", response_model=CompanyResult)
@@ -82,3 +83,19 @@ async def all_company_summary(
             return CompanyResult(**result)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@companies_router.get("/dart_reports/{company_name}", response_model=DartReportResponse)
+async def dart_report(
+    company_name: str,
+    dart_collection = Depends(get_dart_collection)  # 명확한 변수명 사용
+):
+    dart_report_service = DartReportService(dart_collection)  # 컬렉션을 전달
+    try:
+        result = await dart_report_service.get_dart_report(company_name)
+        # DartReportResponse 모델로 반환
+        return DartReportResponse(status="success", data=result)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

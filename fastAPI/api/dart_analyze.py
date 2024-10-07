@@ -120,8 +120,8 @@ async def dart_analyze(company_name: str):
 
     return {f"'{company_name}' dart_report MongoDB 저장 완료"}
 
-# Front에서 Dart 보고서 조회할 때 쓰는 API 
-@router.get("/dart_reports/{company_name}")
+# DART 요약 보고서 조회 API 
+@router.get("/dart_report/{company_name}")
 async def get_dart_report(company_name: str):
     try:
         # 회사 이름으로 문서 조회
