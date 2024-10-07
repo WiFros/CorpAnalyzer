@@ -14,6 +14,9 @@ class NewsLinkService:
                     "company_names": f"{company_name}"
                 }
               },
+            "collapse": {
+                "field": "title.keyword"  # 중복을 피할 필드
+            },
               "sort": [
                 {
                    "pubDate.keyword": {
