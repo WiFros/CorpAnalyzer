@@ -2,10 +2,8 @@ version: '3'
 services:
   api_app:
     build:
-      # context: ./api_app
-      # dockerfile: Dockerfile
-      context: .
-      dockerfile: api_app/Dockerfile
+      context: ./api_app
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:
