@@ -15,6 +15,10 @@ class CompanyList(BaseModel):
     total_pages: int
 
 
+class News(BaseModel):
+    title:str
+    link:str
+
 
 
 class Move(BaseModel):
@@ -30,3 +34,4 @@ class CompanyResult(BaseModel):
     _id: str
     result: Result
     company_name: str
+    news: List[News]
