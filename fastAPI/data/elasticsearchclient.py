@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 from typing import Dict
 from schemas.elasticsearch.request import NewsESSchema
+from schemas.summarization import SumResponse
 from pydantic import ValidationError
 
 class ESclient:
@@ -12,7 +13,7 @@ class ESclient:
         else :
             self.client = Elasticsearch(path)
         self.schmeas = {
-            "news_docs": NewsESSchema
+            "news_docs": SumResponse
         }
 
     def get_info(self,):
@@ -69,7 +70,7 @@ class ESclient:
                             "description" : doc["description"],
                             "company_names" : doc["company_names"],
                             "summary" : doc["summary"],
-                            "published_date" : doc["published_date"],
+                            "pubDate" : doc["pubDate"],
                             "link" : doc["link"]
 
                         }

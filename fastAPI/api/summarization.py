@@ -4,11 +4,12 @@ from models.summarization import summarization
 from schemas.request import NewsItem, NewsBatchRequest
 from schemas.ner import NerResponse
 from typing import List
+from data.elasticsearchclient import ESclient
 
 import pandas as pd
 router = APIRouter()
 
-@router.post("/", response_model=SumBatchResponse)
+@router.post("", response_model=SumBatchResponse)
 async def summ_function(request: List[NerResponse]):
     # Example data
     news_items = request
@@ -30,7 +31,8 @@ async def summ_function(request: List[NerResponse]):
             )
 )
 
-
+    # es_client = ESclient()
+    # es_client.index_docs("news_docs", res)
     response = SumBatchResponse(
         status="success",
         message="Successfully extracted summary data.",

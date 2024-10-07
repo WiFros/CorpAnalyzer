@@ -7,7 +7,7 @@ import pandas as pd
 
 router = APIRouter()
 
-@router.post("/", response_model=EmbeddingBatchResponse)
+@router.post("", response_model=EmbeddingBatchResponse)
 async def get_embeddings(request: List[NewsItem]):
     # Example data
     news_items = request

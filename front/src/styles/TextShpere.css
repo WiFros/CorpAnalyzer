@@ -1,0 +1,38 @@
+html,
+body {
+    height: 100%;
+    /* 전체 높이를 100%로 설정 */
+    margin: 0;
+    /* 기본 여백 제거 */
+    overflow: hidden;
+    /* 스크롤 방지 */
+}
+/* .text-shpere {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 40px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+
+.tagcloud {
+    display: inline-block;
+    font-family: noto-sans;
+    font-weight: 600;
+    letter-spacing: 0.0625em;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+/* Change color of each text in sphere on hover   */
+.tagcloud--item {
+    color: rgb(0, 0, 0);
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.tagcloud--item:hover {
+    color: #aedbff;
+}

@@ -9,7 +9,7 @@ import pandas as pd
 
 router = APIRouter()
 
-@router.post("/", response_model=NerBatchResponse)
+@router.post("", response_model=NerBatchResponse)
 async def ner_function(request: List[NewsItem]):
     # Example data
     news_items = request

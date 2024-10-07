@@ -76,7 +76,7 @@ nvidia-cudnn-cu12==9.1.0.70
 nvidia-cufft-cu12==11.0.2.54
 nvidia-curand-cu12==10.3.2.106
 nvidia-cusolver-cu12==11.4.5.107
-# nvidia-nccl-cu12==2.20.5 # windows error
+nvidia-nccl-cu12==2.20.5 # windows error
 nvidia-cusparse-cu12==12.1.0.106
 nvidia-nvjitlink-cu12==12.6.68
 nvidia-nvtx-cu12==12.1.105
@@ -124,7 +124,7 @@ torchaudio==2.4.1
 torchvision==0.19.1
 tqdm==4.66.5
 transformers==4.44.2
-# triton==3.0.0 # windows error
+triton==3.0.0 # windows error
 typer==0.12.5
 typing==3.7.4.3
 typing-inspect==0.9.0
@@ -133,7 +133,7 @@ tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.3
 uvicorn==0.30.6
-# uvloop==0.20.0 # windows error
+uvloop==0.20.0 # windows error
 watchfiles==0.24.0
 websockets==13.0.1
 yarl==1.11.1
