@@ -1,53 +1,136 @@
-import  { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Divider,
+  Textarea,
+  Link,
+  Button,
+} from "@nextui-org/react";
 
 const CompanyNewsPage = () => {
   const location = useLocation();
-  const { company_id } = location.state || {}; // 회사 ID를 받아옴
-  const [newsList, setNewsList] = useState([]); // 뉴스 목록 상태
+  const company = location.state?.company; // 상태로 넘어온 회사 정보
+  const [news, setNews] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // API 호출 함수
   const fetchCompanyNews = useCallback(async () => {
+    if (!company) return;
+
+    setIsLoading(true);
+    setError(null);
     try {
-      const response = await fetch(`/companies/${company_id}/news`);
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
-      setNewsList(data); // 받아온 뉴스 데이터를 상태에 저장
-    } catch (error) {
-      console.error("Fetch error:", error);
+      // 회사 이름을 URL 패스에 포함시킴
+      const response = await axiosInstance.get(
+        `/api/companies/news/${encodeURIComponent(company.company_name)}`
+      );
+      setNews(response.data);
+    } catch (err) {
+      console.error("뉴스를 가져오는 중 오류가 발생했습니다:", err);
+      setError("뉴스를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
-  }, [company_id]); // company_id가 변경될 때마다 호출
+  }, [company]);
 
   useEffect(() => {
-    fetchCompanyNews(); // 컴포넌트 마운트 시 API 호출
-  }, [fetchCompanyNews]); // fetchCompanyNews가 변경될 때만 호출
+    fetchCompanyNews();
+  }, [fetchCompanyNews]);
+
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  const { result, company_name, news: newsList } = news; // 데이터 구조 해체
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">뉴스 목록</h1>
-      {newsList.length > 0 ? (
-        <ul>
-          {newsList.map((news) => (
-            <li key={news.news_id} className="border-b py-4">
-              <h2 className="text-xl font-semibold">{news.title}</h2>
-              <p>{news.summary}</p>
-              <p className="text-gray-500">
-                {new Date(news.publish_date).toLocaleDateString()}
-              </p>
-              <a
-                href={news.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500"
-              >
-                자세히 보기
-              </a>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>뉴스 정보를 불러오는 중입니다...</p>
-      )}
+    <div className="p-8" style={{ paddingTop: "100px", textAlign: "center" }}>
+      <h1 className="text-3xl font-bold mb-4">{result?.title}</h1>
+      {result?.move.map((moveItem, index) => (
+        <Card
+          key={index}
+          className="mb-6"
+          style={{
+            maxWidth: "600px",
+            margin: "0 auto",
+            padding: "0.5rem",
+            marginBottom: "20px",
+          }}
+        >
+          <CardHeader
+            className="font-bold"
+            style={{ position: "relative", zIndex: 0 }}
+          >
+            {moveItem.field}
+          </CardHeader>
+          <Divider />
+          <CardBody>
+            <ul>
+              {moveItem.current_activity.map((activity, idx) => (
+                <li key={idx} className="mb-1">
+                  {activity}
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </Card>
+      ))}
+      <div
+        className="mx-auto flex flex-col items-center mt-6 max-w-[700px]"
+        style={{ textAlign: "center" }}
+      >
+        <h3 className="text-xl font-bold mb-4">요약</h3>
+        <Textarea
+          isReadOnly
+          variant="bordered"
+          defaultValue={result?.summary}
+          className="mb-6"
+          style={{
+            height: "auto", // 텍스트 크기에 맞게 높이 자동 조정
+            fontSize: "18px", // 폰트 크기 설정 (글자 더 크게)
+            lineHeight: "1.8", // 줄 간격 조정
+            padding: "0.7rem", // 내부 패딩 추가
+          }}
+        />
+      </div>
+      <div
+        className="max-w-[800px]"
+        style={{
+          margin: "0 auto",
+          textAlign: "center",
+          marginTop: "40px",
+          marginBottom: "80px",
+        }}
+      >
+        <h1 className="text-2xl font-bold mb-6">{company_name} 최신 뉴스</h1>
+        <Card style={{ maxWidth: "700px", margin: "0 auto", padding: "1rem" }}>
+          <ul>
+            {newsList.map((newsItem, idx) => (
+              <li key={idx} className="flex justify-between items-center mb-3">
+                <span className="text-lg font-medium">{newsItem.title}</span>
+                <Button
+                  as={Link}
+                  href={newsItem.link}
+                  color="primary"
+                  showAnchorIcon
+                  variant="solid"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                ></Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
     </div>
   );
 };

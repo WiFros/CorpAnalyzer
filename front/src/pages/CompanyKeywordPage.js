@@ -45,7 +45,7 @@ const CompanyKeywordPage = () => {
       {isLoading ? (
         <div className="flex mb-4">
           {/* 스켈레톤 로딩 표시 */}
-          <Skeleton className="h-[560px] w-[600px] rounded-md" />
+          <Skeleton className="h-[560px] w-[560px] rounded-md" />
         </div>
       ) : (
         <Card className="flex bg-gradient-to-tr from-green-400 to-blue-500 text-white shadow-lg p-4">
