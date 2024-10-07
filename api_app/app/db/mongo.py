@@ -26,3 +26,8 @@ async def get_collection():
     if db:
         return db[settings.COLLECTION_NAME]
     return None
+async def get_dart_collection():
+    db = await get_database()
+    if db is not None:
+        return db[settings.DART_COLLECTION_NAME]
+    return None
