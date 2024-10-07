@@ -11,8 +11,7 @@ services:
       - NEWS_SERVICE_URL=${NEWS_SERVICE_URL:-http://news_serv_app:8001}
     volumes:
       - ./api_app:/api_app
-    command: >
-      bash -c "PYTHONPATH=/api_app uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - app-network
     extra_hosts:
