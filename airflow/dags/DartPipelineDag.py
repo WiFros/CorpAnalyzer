@@ -10,10 +10,16 @@ with DAG(
         catchup=False,
 ) as dag:
 
+    init_data = PythonOperator(
+        task_id='InitData',
+        python_callable=DartCrawlingFunctions.delete_all_data,
+        dag=dag,
+    )
+
     search_corp = PythonOperator(
         task_id='search_corp',
         python_callable=DartCrawlingFunctions.search_corp,
         dag=dag,
     )
 
-    search_corp
+    init_data >> search_corp

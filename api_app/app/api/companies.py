@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query, Depends, HTTPException
 from app.services.company_search import CompanySearchService
 from app.services.hotKeyword_search import hotKeywordService
 from app.services.news_summary import NewsSummaryService
+from app.services.news_link import NewsLinkService
 from app.services.dart_report import DartReportService
 from app.models.company import CompanyList, CompanyResult, DartReportResponse
 from app.models.hotkeyword import KeywordList
@@ -62,13 +63,23 @@ async def company_summary(
    db = Depends(get_database)
 ):
     news_summary_service = NewsSummaryService(db)
+    news_link_service = NewsLinkService(company_name)
     try:
-        result = await news_summary_service.get_summary_news_from_hadoop(company_name)
-        if result:
-            print(result)
-            return result
+        summary_result = await news_summary_service.get_summary_news_from_hadoop(company_name)
+        link_result = await news_link_service.get_news_link()
+        print(link_result)
+
+        if summary_result:
+            if link_result:
+                summary_result['news']=link_result
+
+                print("summary result: ", summary_result)
+            return summary_result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+
 
 
 @companies_router.get("/news", response_model=CompanyResult)

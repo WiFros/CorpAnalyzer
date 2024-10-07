@@ -3,7 +3,7 @@ crawler:
   api_secret: 6vcvEw0Bwg
   crawler_display: 10
   crawler_sort: date
-  dart_secret: 5819b814ebeb6d4653b8f662554255be23d501f2
+  dart_secret: d3b83a3274a6c9e5ec82921e8fa953353e5f3bfc
 
 elastic_search:
   host: https://j11a606.p.ssafy.io:9200
