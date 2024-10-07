@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        FRONTEND_DIR = "front"
+        FRONTEND_DIR = "${WORKSPACE}/front"
         BACKEND_DIR = "backend"
     }
 
