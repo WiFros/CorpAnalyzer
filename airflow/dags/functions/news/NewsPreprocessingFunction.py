@@ -14,6 +14,7 @@ def embedding_processing(**context):
         raise Exception(response.status_code, response.json())
 
     result = response.json()['data']
+    print(result[0])
     print(type(result))
 
     return result

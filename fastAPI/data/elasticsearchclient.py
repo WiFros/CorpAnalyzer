@@ -13,7 +13,8 @@ class ESclient:
         else :
             self.client = Elasticsearch(path)
         self.schmeas = {
-            "news_docs": SumResponse
+            "news_docs": SumResponse,
+            "news_test" : SumResponse
         }
 
     def get_info(self,):
@@ -71,8 +72,8 @@ class ESclient:
                             "company_names" : doc["company_names"],
                             "summary" : doc["summary"],
                             "pubDate" : doc["pubDate"],
-                            "link" : doc["link"]
-
+                            "link" : doc["link"],
+                            "embedding_vector" : doc["embedding_vector"]
                         }
             }
             queries.append(operation)

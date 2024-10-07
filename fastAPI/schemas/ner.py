@@ -8,6 +8,7 @@ class NerResponse(BaseModel):
     pubDate : str
     link : str
     company_names : List[str]
+    embedding_vector : List[float]
     # published_date: datetime 
 
 class NerBatchResponse(BaseModel):

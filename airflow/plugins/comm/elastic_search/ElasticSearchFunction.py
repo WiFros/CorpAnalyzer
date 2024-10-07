@@ -6,6 +6,7 @@ import json
 client: ESClient = ESClient()
 
 def store_to_elastic_search(**context) -> None:
+
     data_list: list[dict] = context['task_instance'].xcom_pull(task_ids='summarization_processing')
     client.bulk_index("news_docs", data_list)
 

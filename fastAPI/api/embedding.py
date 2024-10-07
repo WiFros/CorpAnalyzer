@@ -24,6 +24,7 @@ async def get_embeddings(request: List[NewsItem]):
                 description= row.description,
                 pubDate = row.pubDate,
                 link = row.link,
+                embedding_vector = row.embedding_vector
             )
 )
 

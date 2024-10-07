@@ -4,25 +4,20 @@ from langchain.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import PydanticOutputParser
 from schemas.langchain.news.news_schema import CompanySummary
-
+from models.reranker import rerank_process
 import os
 
-
-# schema = StructType([
-#     StructField("title", StringType(), nullable=False),
-#     StructField("embedding_vector", ArrayType(FloatType()), nullable=False)
-# ])
-
-# embedding_udf = udf(embedding, schema)
 
 
 def news_summarization(company_name : str = "", documents : Dict = {})-> str:
     API_KEY = "AIzaSyBKpwmTbXLt6Y6Dc5NcVinepIW2fhCH7l4"
     os.environ["GOOGLE_API_KEY"] = API_KEY
-    # make 
+    # select top 50 using rerank_process
+    query = f"{company_name}의 기술과 미래 동향을 알려줘"
+    top_50_index = rerank_process(query, documents)
     request_data = ""
-    for document in documents:
-        request_data += " " + document["_source"]["description"]
+    for idx in top_50_index:
+        request_data += " " + documents[idx]["_source"]["summary"]
     
     # make request to google GEN AI, 매개변수 다 yaml으로 빼기
     model = ChatGoogleGenerativeAI(model = "gemini-1.5-flash-latest")
