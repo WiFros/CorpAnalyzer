@@ -1,6 +1,8 @@
 import requests
 
-domain: str = "70.12.247.100:8080"
+#domain: str = "70.12.247.100:8080"
+#domain: str = "70.12.114.101:8080"
+domain: str = "218.235.71.63:8080"
 
 
 def embedding_processing(**context):
