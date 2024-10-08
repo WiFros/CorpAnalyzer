@@ -67,13 +67,16 @@ async def company_summary(
     try:
         summary_result = await news_summary_service.get_summary_news_from_hadoop(company_name)
         link_result = await news_link_service.get_news_link()
-        print(link_result)
 
         if summary_result:
             if link_result:
                 summary_result['news']=link_result
+            else:
+                summary_result['news']=[{
+                'title':'no data',
+                'link': 'no data'
+            }]
 
-                print("summary result: ", summary_result)
             return summary_result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
