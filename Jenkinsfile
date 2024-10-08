@@ -87,7 +87,7 @@ pipeline {
                                 '''
                             }
                         }
-                    }
+                    
                 }
 
                 stage('Deploy to Docker') {
@@ -106,9 +106,7 @@ pipeline {
                         }
                     }
                 }
-
-
-
+            }
         }
 
         stage('Backend') {
