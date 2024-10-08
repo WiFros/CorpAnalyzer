@@ -11,6 +11,9 @@ pipeline {
     environment {
         FRONTEND_DIR = "${WORKSPACE}/front"
         BACKEND_DIR = "backend"
+        IMAGE_NAME = "front-react-app"  
+        CONTAINER_NAME = "front-react-app-1"
+        PORT = "3000"  
     }
 
     stages {
@@ -75,15 +78,37 @@ pipeline {
                 //    }
                // }
 
-                stage('Deploy') {
-                    steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'echo "Deploying frontend..."'
-                            // 실제 프론트엔드 배포 명령어를 여기에 추가하세요
+                stage('Build Docker Image') {
+                        steps {
+                            script {
+                                // Building Docker image for the React app
+                                sh '''
+                                    docker build -t ${IMAGE_NAME} ${FRONTEND_DIR}
+                                '''
+                            }
                         }
                     }
                 }
-            }
+
+                stage('Deploy to Docker') {
+                    steps {
+                        script {
+                            // Stopping any existing container if it's running
+                            sh '''
+                                docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop ${CONTAINER_NAME} || true
+                                docker ps -aq --filter "name=${CONTAINER_NAME}" | grep -q . && docker rm ${CONTAINER_NAME} || true
+                            '''
+
+                            // Running the Docker container for the React app
+                            sh '''
+                                docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${IMAGE_NAME}
+                            '''
+                        }
+                    }
+                }
+
+
+
         }
 
         stage('Backend') {
