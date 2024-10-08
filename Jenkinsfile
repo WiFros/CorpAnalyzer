@@ -11,8 +11,8 @@ pipeline {
     environment {
         FRONTEND_DIR = "${WORKSPACE}/front"
         BACKEND_DIR = "backend"
-        IMAGE_NAME = "front-react-app"  
-        CONTAINER_NAME = "front-react-app-1"
+        IMAGE_NAME = "react-app"  
+        CONTAINER_NAME = "react-app-1"
         PORT = "3000"  
     }
 
@@ -83,7 +83,7 @@ pipeline {
                             script {
                                 // Building Docker image for the React app
                                 sh '''
-                                    docker build -t ${IMAGE_NAME} ${FRONTEND_DIR}
+                                    docker build -t ${IMAGE_NAME} .
                                 '''
                             }
                         }
