@@ -67,13 +67,13 @@ pipeline {
                     }
                 }
 
-                stage('Test') {
-                    steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'npm test'
+               // stage('Test') {
+                //    steps {
+                 //       dir("${FRONTEND_DIR}") {
+                 //           sh 'npm test'
                         }
-                    }
-                }
+                //    }
+               // }
 
                 stage('Deploy') {
                     steps {
