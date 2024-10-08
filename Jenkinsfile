@@ -31,7 +31,7 @@ pipeline {
                             sh "ls"
                             // front 디렉토리 존재 확인 및 내용 리스트
                             sh "ls -la ${FRONTEND_DIR}"
-                            sh "echo $ENV_FILE"
+                            sh "echo ${ENV.ENV_FILE}"
                             // 환경 파일 복사
                             withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {    
                                
