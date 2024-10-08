@@ -73,7 +73,7 @@ async def company_summary(
                 summary_result['news']=link_result
             else:
                 summary_result['news']=[{
-                'title':'no data',
+                'title':'최신 뉴스가 없습니다.',
                 'link': 'no data'
             }]
 
