@@ -71,7 +71,7 @@ pipeline {
                 //    steps {
                  //       dir("${FRONTEND_DIR}") {
                  //           sh 'npm test'
-                        }
+                   //     }
                 //    }
                // }
 
