@@ -86,11 +86,13 @@ async def company_summary(
 async def all_company_summary(
    db = Depends(get_database)
 ):
+    print('news z컨트롤러')
     news_summary_service = NewsSummaryService(db)
 
     try:
         result = await news_summary_service.save_all_summary_news_from_mongo_to_hadoop()
         if result:
+            print("하둡저장 완료!!!")
             return CompanyResult(**result)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
