@@ -83,6 +83,7 @@ pipeline {
                             script {
                                 // Building Docker image for the React app
                                 sh '''
+                                    ls ${FRONTEND_DIR}
                                     docker build -t ${IMAGE_NAME} ${FRONTEND_DIR}
                                 '''
                             }
