@@ -11,7 +11,7 @@ class NewsLinkService:
         self.query = {
              "query": {
                 "match": {
-                    "company_names": f"{company_name}"
+                    "title": f"{company_name}"
                 }
               },
             "collapse": {
