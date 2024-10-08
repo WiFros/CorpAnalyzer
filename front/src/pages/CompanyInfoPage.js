@@ -19,7 +19,9 @@ const CompanyInfoPage = () => {
     try {
       // 회사 이름을 URL 패스에 포함시킴
       const response = await axiosInstance.get(
-        `/dart_analyze/dart_reports/${encodeURIComponent(company.company_name)}`
+        `/api/companies/dart_reports/${encodeURIComponent(
+          company.company_name
+        )}`
       );
       setInfo(response.data.data); // JSON 데이터 구조에 맞춰 수정
     } catch (err) {
