@@ -113,24 +113,43 @@ const CompanyNewsPage = () => {
       >
         <h1 className="text-2xl font-bold mb-6">{company_name} 최신 뉴스</h1>
         <Card style={{ maxWidth: "700px", margin: "0 auto", padding: "1rem" }}>
-          <ul>
-            {newsList.map((newsItem, idx) => (
-              <li key={idx} className="flex justify-between items-center mb-3">
-                <span className="text-lg font-medium font-gothic">
-                  {newsItem.title}
-                </span>
-                <Button
-                  as={Link}
-                  href={newsItem.link}
-                  color="primary"
-                  showAnchorIcon
-                  variant="light"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                ></Button>
-              </li>
-            ))}
-          </ul>
+          {newsList && newsList.length > 0 ? (
+            <ul>
+              {newsList.map((newsItem, idx) => (
+                <li
+                  key={idx}
+                  className="flex justify-between items-center mb-3"
+                >
+                  <span className="text-lg font-medium font-gothic">
+                    {newsItem.title}
+                  </span>
+                  {/* 링크가 "no data"가 아닐 때만 버튼을 렌더링 */}
+                  {newsItem.link && newsItem.link !== "no data" ? (
+                    <Button
+                      as={Link}
+                      href={newsItem.link}
+                      color="primary"
+                      showAnchorIcon
+                      variant="light"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      기사 보기
+                    </Button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "100px" }}
+            >
+              <p className="text-lg font-gothic text-center">
+                최신 뉴스가 없습니다.
+              </p>
+            </div>
+          )}
         </Card>
       </div>
     </div>
