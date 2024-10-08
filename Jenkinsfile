@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent{
+        label 'slave2'
+    }
 
     parameters {
         booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Build the frontend project')
@@ -28,14 +30,22 @@ pipeline {
                         script {
                             // 현재 작업 디렉토리 확인
                             sh "pwd"
+                            sh "ls"
                             // front 디렉토리 존재 확인 및 내용 리스트
-                            sh "ls -la ${FRONTEND_DIR}"
+                            //sh "ls -la ${FRONTEND_DIR}"
                             
                             // 환경 파일 복사
-                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {
-                                sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
+                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {    
+                                
+                                //sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
                                 // 복사 후 확인
-                                sh "ls -la ${FRONTEND_DIR}/.env"
+                                //sh "ls -la ${FRONTEND_DIR}/.env"
+                                sh '''
+                                    cp \$ENV_FILE ${FRONTEND_DIR}/.env
+
+                                    ls -la ${FRONTEND_DIR}/.env
+                                '''
+
                             }
                         }
                     }
