@@ -28,6 +28,7 @@ pipeline {
                         script {
                             // 현재 작업 디렉토리 확인
                             sh "pwd"
+                            sh "ls"
                             // front 디렉토리 존재 확인 및 내용 리스트
                             sh "ls -la ${FRONTEND_DIR}"
                             
