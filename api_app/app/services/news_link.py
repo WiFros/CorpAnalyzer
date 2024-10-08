@@ -30,11 +30,17 @@ class NewsLinkService:
     async def get_news_link(self):
         results = self.db.search(index="news_docs", body=self.query)
         result = []
-        for i in range(len(results['hits']['hits'])):
+        if results:
+            for i in range(len(results['hits']['hits'])):
 
+                result.append({
+                    'title':results['hits']['hits'][i]["_source"]['title'],
+                    'link':results['hits']['hits'][i]["_source"]['link']
+                })
+        else:
             result.append({
-                'title':results['hits']['hits'][i]["_source"]['title'],
-                'link':results['hits']['hits'][i]["_source"]['link']
+                'title':'',
+                'link': ''
             })
 
         return result
