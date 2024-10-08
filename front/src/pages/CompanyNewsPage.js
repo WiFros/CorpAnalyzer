@@ -54,11 +54,11 @@ const CompanyNewsPage = () => {
 
   return (
     <div className="p-8" style={{ paddingTop: "100px", textAlign: "center" }}>
-      <h1 className="text-3xl font-bold mb-4">{result?.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 font-kopub">{result?.title}</h1>
       {result?.move.map((moveItem, index) => (
         <Card
           key={index}
-          className="mb-6"
+          className="mb-6 font-gothic"
           style={{
             maxWidth: "600px",
             margin: "0 auto",
@@ -93,7 +93,7 @@ const CompanyNewsPage = () => {
           isReadOnly
           variant="bordered"
           defaultValue={result?.summary}
-          className="mb-6"
+          className="mb-6 font-gothic"
           style={{
             height: "auto", // 텍스트 크기에 맞게 높이 자동 조정
             fontSize: "18px", // 폰트 크기 설정 (글자 더 크게)
@@ -116,13 +116,15 @@ const CompanyNewsPage = () => {
           <ul>
             {newsList.map((newsItem, idx) => (
               <li key={idx} className="flex justify-between items-center mb-3">
-                <span className="text-lg font-medium">{newsItem.title}</span>
+                <span className="text-lg font-medium font-gothic">
+                  {newsItem.title}
+                </span>
                 <Button
                   as={Link}
                   href={newsItem.link}
                   color="primary"
                   showAnchorIcon
-                  variant="solid"
+                  variant="light"
                   target="_blank"
                   rel="noopener noreferrer"
                 ></Button>

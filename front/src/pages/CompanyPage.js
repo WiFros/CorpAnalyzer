@@ -45,7 +45,7 @@ const CompanyPage = () => {
             })
           }
           radius="large"
-          className="bg-purple-600 text-white hover:-translate-y-1 hover:bg-purple-500 transition duration-300 shadow-md py-8 text-lg"
+          className="bg-secondary-300 text-white hover:-translate-y-1 hover:bg-primary-300 transition duration-300 shadow-md py-8 text-lg"
         >
           기업 상세 정보
         </Button>
@@ -56,7 +56,7 @@ const CompanyPage = () => {
             })
           }
           radius="large"
-          className="bg-purple-600 text-white hover:-translate-y-1 hover:bg-purple-500 transition duration-300 shadow-md py-8 text-lg"
+          className="bg-secondary-300 text-white hover:-translate-y-1 hover:bg-primary-300 transition duration-300 shadow-md py-8 text-lg"
         >
           기업 관련 뉴스
         </Button>
@@ -67,7 +67,7 @@ const CompanyPage = () => {
             })
           }
           radius="large"
-          className="bg-purple-600 text-white hover:-translate-y-1 hover:bg-purple-500 transition duration-300 shadow-md py-8 text-lg"
+          className="bg-secondary-300 text-white hover:-translate-y-1 hover:bg-primary-300 transition duration-300 shadow-md py-8 text-lg"
         >
           키워드 트렌드
         </Button>
@@ -78,7 +78,7 @@ const CompanyPage = () => {
             })
           }
           radius="large"
-          className="bg-purple-600 text-white hover:-translate-y-1 hover:bg-purple-500 transition duration-300 shadow-md py-8 text-lg"
+          className="bg-secondary-300 text-white hover:-translate-y-1 hover:bg-primary-300 transition duration-300 shadow-md py-8 text-lg"
         >
           기업 재무제표
         </Button>
