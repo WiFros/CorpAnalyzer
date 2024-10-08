@@ -16,6 +16,8 @@ COPY . .
 # Build the React app
 RUN npm run build
 
+RUN ls -la /app/build
+
 # Step 2: Production stage
 FROM node:20.15.1-alpine3.20
 
