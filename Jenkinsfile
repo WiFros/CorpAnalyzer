@@ -33,7 +33,8 @@ pipeline {
                             sh "ls -la ${FRONTEND_DIR}"
                             
                             // 환경 파일 복사
-                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {
+                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {    
+                                sh "echo $ENV_FILE"
                                 sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
                                 // 복사 후 확인
                                 sh "ls -la ${FRONTEND_DIR}/.env"
