@@ -16,8 +16,6 @@ COPY . .
 # Build the React app
 RUN npm run build
 
-RUN ls -la /app/build
-
 # Step 2: Production stage
 FROM node:20.15.1-alpine3.20
 
@@ -28,7 +26,7 @@ WORKDIR /app
 RUN npm install -g serve
 
 # Copy the build output from the 'build' stage
-COPY --from=build /app/build /app/build
+COPY --from=build /app/dist /app/build
 
 # Expose the port that the app will run on (e.g., 3000)
 EXPOSE 3000
