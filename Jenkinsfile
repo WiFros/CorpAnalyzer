@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent slave2
 
     parameters {
         booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Build the frontend project')
