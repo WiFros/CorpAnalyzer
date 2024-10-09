@@ -1,4 +1,3 @@
-from elasticsearchclient import ESclient
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import PydanticOutputParser
@@ -11,22 +10,24 @@ import numpy as np
 import faiss 
 import json
 import torch
-
-
+import dotenv
+import os
 def exp_normalize(x):
     b = x.max() 
     y = np.exp(x - b)
     return y / y.sum()
 
+dotenv.load_dotenv()
 
 def rerank_process(query, document):
+    model_name = os.getenv("RERANKER_MODEL_NAME")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    tokenizer = AutoTokenizer.from_pretrained("Dongjin-kr/ko-reranker")
-    model = AutoModelForSequenceClassification.from_pretrained("Dongjin-kr/ko-reranker").to(device).half()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name).to(device).half()
     
     pairs = [[query, document[idx]["_source"]["summary"]] for idx in range(len(document))]
 
-    # 상위 100개 문서를 reranker로 점수 매기기.
+    # 상위 500개 문서를 reranker로 점수 매기기.
     scores = []
     for pair in tqdm(pairs, total = len(pairs) ,desc = "rerank process"):
         with torch.no_grad():

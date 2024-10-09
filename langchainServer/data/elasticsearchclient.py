@@ -1,20 +1,24 @@
+import dotenv
+import os
+
 from elasticsearch import Elasticsearch, helpers
 from typing import Dict
 from schemas.elasticsearch.request import NewsESSchema
 from schemas.summarization import SumResponse
 from pydantic import ValidationError
 
+dotenv.load_dotenv()
 class ESclient:
     # ElasticSearch client not fit with data
 
     def __init__(self,path= None):
         if (path is None):
-            self.client = Elasticsearch("http://localhost:9200")
+            self.client = Elasticsearch(os.getenv("ES_LOCALHOST"))
         else :
             self.client = Elasticsearch(
-                hosts="https://j11a606.p.ssafy.io:9200",
+                hosts= os.getenv("ES_HOST"),
                 verify_certs=False,
-                basic_auth=("elastic", "ssafya606")
+                basic_auth=(os.getenv("ES_ID"), os.getenv("ES_PASSWORD"))
             )
 
     def get_info(self,):

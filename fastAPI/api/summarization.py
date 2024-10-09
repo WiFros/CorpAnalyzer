@@ -32,8 +32,8 @@ async def summ_function(request: List[NerResponse]):
             )
 )
 
-    es_client = ESclient()
-    es_client.index_docs("news_test", res)
+    # es_client = ESclient()
+    # es_client.index_docs("news_test", res)
     response = SumBatchResponse(
         status="success",
         message="Successfully extracted summary data.",

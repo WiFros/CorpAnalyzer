@@ -2,3 +2,5 @@
 dart-fss
 elasticsearch
 motor
+torch
+transformers
