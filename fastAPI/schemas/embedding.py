@@ -7,6 +7,7 @@ class EmbeddingResponse(BaseModel):
     description : str
     pubDate : str
     link : str
+    embedding_vector : List[float]
     # published_date: datetime 
 
 class EmbeddingBatchResponse(BaseModel):
