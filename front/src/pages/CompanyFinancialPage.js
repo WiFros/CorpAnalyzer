@@ -405,7 +405,7 @@ const CompanyFinancialPage = () => {
             </div>
 
             <Card className="mt-4 bg-gradient-to-br from-white to-gray-100 shadow-sm w-400">
-                <CardHeader className="tfont-bold text-xl">자산 구조</CardHeader>
+                <CardHeader className="front-bold text-xl">자산 구조</CardHeader>
                 <CardBody className="p-2">
                     <div style={{ height: '400px' }}>
                         <Bar
