@@ -1,13 +1,14 @@
 from datetime import datetime
 
+import time
 import requests
 from pymongo import MongoClient
 from pymongo.errors import BulkWriteError, ConnectionFailure
 
 # host: str = "70.12.247.100:8081"
 #host: str = "70.12.114.101:8081"
-host: str = "218.235.71.63:8081"
-
+# host: str = "218.235.71.63:8081"
+host: str = "host.docker.internal:8082"
 
 def call_RAG_server() -> list[dict]:
     result: list[dict] = []
@@ -15,7 +16,6 @@ def call_RAG_server() -> list[dict]:
     with open('/usr/local/airflow/include/data.txt', 'r') as file:
         while True:
             corp_name: str = file.readline()
-
             if not corp_name:
                 break
 

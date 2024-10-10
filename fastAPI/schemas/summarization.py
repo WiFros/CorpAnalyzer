@@ -9,6 +9,7 @@ class SumResponse(BaseModel):
     link : str
     company_names : List[str]
     summary : str
+    embedding_vector : List[float]
     # published_date: datetime 
 
 class SumBatchResponse(BaseModel):

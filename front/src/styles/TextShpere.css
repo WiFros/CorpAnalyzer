@@ -36,3 +36,7 @@ body { */
 .tagcloud--item:hover {
     color: #aedbff;
 }
+
+.tagcloud span {
+    cursor: pointer;
+}

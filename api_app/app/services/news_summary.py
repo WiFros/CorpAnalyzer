@@ -46,15 +46,18 @@ class NewsSummaryService:
         raise TypeError(f"Type {type(obj)} is not serializable")
     async def save_all_summary_news_from_mongo_to_hadoop(self):
 
-        company_cursor = self.db.news_report.find({})
+        company_cursor = self.db.news_report.find({}).sort({'created_at':-1})
 
         # 데이터를 리스트로 변환하여 결과 받기
         result = await company_cursor.to_list(length=500)  # 최대 100개의 결과 가져오기
-
+        print("하둡 저장 서비스")
         if result:
             client = InsecureClient('http://j11a606a.p.ssafy.io:9870', user='hadoop')
             for company in result:
                 company_name = company['company_name'].strip()
+                date = company['created_at']
+                print(company_name)
+                print(date)
                 json_data = json.dumps(company, indent=4, ensure_ascii=False, default=self.json_serializer)
                 hdfs_file_path = f'/news/{company_name}/{company_name}.json'
                 with open('temp.json', 'w', encoding='utf-8') as temp_file:

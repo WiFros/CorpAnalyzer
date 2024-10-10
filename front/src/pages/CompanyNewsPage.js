@@ -54,11 +54,11 @@ const CompanyNewsPage = () => {
 
   return (
     <div className="p-8" style={{ paddingTop: "100px", textAlign: "center" }}>
-      <h1 className="text-3xl font-bold mb-4">{result?.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 font-kopub">{result?.title}</h1>
       {result?.move.map((moveItem, index) => (
         <Card
           key={index}
-          className="mb-6"
+          className="mb-6 font-gothic"
           style={{
             maxWidth: "600px",
             margin: "0 auto",
@@ -93,7 +93,7 @@ const CompanyNewsPage = () => {
           isReadOnly
           variant="bordered"
           defaultValue={result?.summary}
-          className="mb-6"
+          className="mb-6 font-gothic"
           style={{
             height: "auto", // 텍스트 크기에 맞게 높이 자동 조정
             fontSize: "18px", // 폰트 크기 설정 (글자 더 크게)
@@ -113,22 +113,41 @@ const CompanyNewsPage = () => {
       >
         <h1 className="text-2xl font-bold mb-6">{company_name} 최신 뉴스</h1>
         <Card style={{ maxWidth: "700px", margin: "0 auto", padding: "1rem" }}>
-          <ul>
-            {newsList.map((newsItem, idx) => (
-              <li key={idx} className="flex justify-between items-center mb-3">
-                <span className="text-lg font-medium">{newsItem.title}</span>
-                <Button
-                  as={Link}
-                  href={newsItem.link}
-                  color="primary"
-                  showAnchorIcon
-                  variant="solid"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                ></Button>
-              </li>
-            ))}
-          </ul>
+          {newsList && newsList.length > 0 ? (
+            <ul>
+              {newsList.map((newsItem, idx) => (
+                <li
+                  key={idx}
+                  className="flex justify-between items-center mb-3"
+                >
+                  <span className="text-lg font-medium font-gothic">
+                    {newsItem.title}
+                  </span>
+                  {/* 링크가 "no data"가 아닐 때만 버튼을 렌더링 */}
+                  {newsItem.link && newsItem.link !== "no data" ? (
+                    <Button
+                      as={Link}
+                      href={newsItem.link}
+                      color="primary"
+                      showAnchorIcon
+                      variant="light"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    ></Button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div
+              className="flex justify-center items-center"
+              style={{ height: "100px" }}
+            >
+              <p className="text-lg font-gothic text-center">
+                최신 뉴스가 없습니다.
+              </p>
+            </div>
+          )}
         </Card>
       </div>
     </div>

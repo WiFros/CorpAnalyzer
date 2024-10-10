@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from schemas.ner import NerResponse, NerBatchResponse
+from schemas.embedding import EmbeddingResponse
 from models.ner import ner
 from schemas.request import NewsItem, NewsBatchRequest
 from pyspark.sql import SparkSession
@@ -10,7 +11,7 @@ import pandas as pd
 router = APIRouter()
 
 @router.post("", response_model=NerBatchResponse)
-async def ner_function(request: List[NewsItem]):
+async def ner_function(request: List[EmbeddingResponse]):
     # Example data
     news_items = request
     df_pandas = pd.DataFrame([item.dict() for item in news_items])
@@ -25,7 +26,8 @@ async def ner_function(request: List[NewsItem]):
                 description= row.description,
                 company_names =  row.company_names if row.company_names is not None else [],
                 pubDate = row.pubDate,
-                link = row.link
+                link = row.link,
+                embedding_vector = row.embedding_vector
             )
 )
 

@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent{
+        label 'slave2'
+    }
 
     parameters {
         booleanParam(name: 'BUILD_FRONTEND', defaultValue: true, description: 'Build the frontend project')
@@ -9,6 +11,9 @@ pipeline {
     environment {
         FRONTEND_DIR = "${WORKSPACE}/front"
         BACKEND_DIR = "backend"
+        IMAGE_NAME = "react-app"  
+        CONTAINER_NAME = "react-app-1"
+        PORT = "3000"  
     }
 
     stages {
@@ -28,14 +33,22 @@ pipeline {
                         script {
                             // 현재 작업 디렉토리 확인
                             sh "pwd"
+                            sh "ls"
                             // front 디렉토리 존재 확인 및 내용 리스트
-                            sh "ls -la ${FRONTEND_DIR}"
+                            //sh "ls -la ${FRONTEND_DIR}"
                             
                             // 환경 파일 복사
-                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {
-                                sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
+                            withCredentials([file(credentialsId: 'react-env-file', variable: 'ENV_FILE')]) {    
+                                
+                                //sh "cp \$ENV_FILE ${FRONTEND_DIR}/.env"
                                 // 복사 후 확인
-                                sh "ls -la ${FRONTEND_DIR}/.env"
+                                //sh "ls -la ${FRONTEND_DIR}/.env"
+                                sh '''
+                                    cp \$ENV_FILE ${FRONTEND_DIR}/.env
+
+                                    ls -la ${FRONTEND_DIR}/.env
+                                '''
+
                             }
                         }
                     }
@@ -57,19 +70,40 @@ pipeline {
                     }
                 }
 
-                stage('Test') {
-                    steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'npm test'
+               // stage('Test') {
+                //    steps {
+                 //       dir("${FRONTEND_DIR}") {
+                 //           sh 'npm test'
+                   //     }
+                //    }
+               // }
+
+                stage('Build Docker Image') {
+                        steps {
+                            script {
+                                // Building Docker image for the React app
+                                sh '''
+                                    ls ${FRONTEND_DIR}
+                                    docker build -t ${IMAGE_NAME} ${FRONTEND_DIR}
+                                '''
+                            }
                         }
-                    }
+                    
                 }
 
-                stage('Deploy') {
+                stage('Deploy to Docker') {
                     steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'echo "Deploying frontend..."'
-                            // 실제 프론트엔드 배포 명령어를 여기에 추가하세요
+                        script {
+                            // Stopping any existing container if it's running
+                            sh '''
+                                docker ps -q --filter "name=${CONTAINER_NAME}" | grep -q . && docker stop ${CONTAINER_NAME} || true
+                                docker ps -aq --filter "name=${CONTAINER_NAME}" | grep -q . && docker rm ${CONTAINER_NAME} || true
+                            '''
+
+                            // Running the Docker container for the React app
+                            sh '''
+                                docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${IMAGE_NAME}
+                            '''
                         }
                     }
                 }

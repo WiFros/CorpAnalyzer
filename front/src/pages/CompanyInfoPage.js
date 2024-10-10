@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
+import ReactMarkdown from "react-markdown";
 
 const CompanyInfoPage = () => {
   const location = useLocation();
@@ -45,27 +46,70 @@ const CompanyInfoPage = () => {
   }
 
   return (
-    <div className="p-8" style={{ paddingTop: "80px" }}>
+    <div className="p-8" style={{ paddingTop: "100px", textAlign: "center" }}>
       <h1 className="text-3xl font-bold mb-4">{info.company_name}</h1>
 
-      <Card className="mb-6" style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <CardHeader className="font-bold">주요 사업 내용</CardHeader>
+      <Card
+        className="mb-6 font-gothic"
+        style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+          padding: "0.5rem",
+          marginBottom: "20px",
+        }}
+      >
+        <CardHeader
+          className="font-bold"
+          style={{ position: "relative", zIndex: 0 }}
+        >
+          주요 사업 내용
+        </CardHeader>
         <Divider />
-        <CardBody>{info.result.business_overview}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.business_overview}</ReactMarkdown>
+        </CardBody>
       </Card>
 
-      <Card className="mb-6" style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <CardHeader className="font-bold">주요 제품 및 서비스</CardHeader>
+      <Card
+        className="mb-6 font-gothic"
+        style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+          padding: "0.5rem",
+          marginBottom: "20px",
+        }}
+      >
+        <CardHeader
+          className="font-bold"
+          style={{ position: "relative", zIndex: 0 }}
+        >
+          주요 제품 및 서비스
+        </CardHeader>
         <Divider />
-        <CardBody>{info.result.products_and_sales}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.products_and_sales}</ReactMarkdown>
+        </CardBody>
       </Card>
 
-      <Card className="mb-6" style={{ maxWidth: "600px", margin: "0 auto" }}>
-        <CardHeader className="font-bold">
+      <Card
+        className="mb-6 font-gothic"
+        style={{
+          maxWidth: "600px",
+          margin: "0 auto",
+          padding: "0.5rem",
+          marginBottom: "20px",
+        }}
+      >
+        <CardHeader
+          className="font-bold"
+          style={{ position: "relative", zIndex: 0 }}
+        >
           주요 계약 및 연구 개발 활동
         </CardHeader>
         <Divider />
-        <CardBody>{info.result.contracts_and_rnd}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.contracts_and_rnd}</ReactMarkdown>
+        </CardBody>
       </Card>
     </div>
   );
