@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
-import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
+import SummaryDashboard from "../components/SummaryDashboard.js";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -14,7 +15,8 @@ import {
     Legend,
     ArcElement
 } from 'chart.js';
-import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider, Button } from "@nextui-org/react";
+import { TrendingUp, DollarSign, PieChart, BarChart2, Activity, Percent } from "lucide-react";
 
 ChartJS.register(
     CategoryScale,
@@ -231,6 +233,7 @@ const CompanyFinancialPage = () => {
     return (
         <div className="p-8" style={{ paddingTop: "100px", textAlign: "center" }}>
             <h1 className="text-3xl font-bold mb-4 font-kopub">{company.company_name} 재무제표 분석</h1>
+            <SummaryDashboard financialData={financialData} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="w-full">
