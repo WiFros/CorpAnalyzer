@@ -8,6 +8,7 @@ from dart_fss.errors import NoDataReceived
 from dart_fss.filings.reports import Report
 from dart_fss.filings.search_result import SearchResults
 from pymongo import MongoClient
+from hdfs import InsecureClient
 
 _appendable_set: set = {"사업의 내용", "사업의 개요", "주요 제품 및 서비스", "매출 및 수주상황",
                         "주요계약 및 연구개발활동", "기타 참고사항", "연구개발실적"}
@@ -86,6 +87,10 @@ def _make_html_file(report: Report, corp_name: str, report_name: str) -> None:
 
     bucket = gridfs.GridFSBucket(database)
 
+    #하둡
+    hadoop_client = InsecureClient('http://j11a606a.p.ssafy.io:9870', user='hadoop')
+    hdfs_file_path = f'/data/dart/{company_name}/{report_name}/{company_name}.json'
+
     for page in report.pages:
         page_dict: dict = page.to_dict()
         # 디버깅해야함
@@ -101,6 +106,9 @@ def _make_html_file(report: Report, corp_name: str, report_name: str) -> None:
                 with bucket.open_upload_stream(filename=filename, chunk_size_bytes=default_chunk_size,
                                                metadata=metadata) as gridIn:
                     gridIn.write(page.html.encode("utf-8"))
+                
+                # 하둡 저장
+                hadoop_client.write(hdfs_file_path, data=page.html.encode("utf-8"))
 
 
 if __name__ == "__main__":
