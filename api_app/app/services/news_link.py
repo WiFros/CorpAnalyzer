@@ -31,7 +31,6 @@ class NewsLinkService:
 
         results = self.db.search(index="news_docs", body=self.query)
         result = []
-        print(results)
 
         for i in range(len(results['hits']['hits'])):
 
