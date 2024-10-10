@@ -48,7 +48,7 @@ const CompanyKeywordPage = () => {
           <Skeleton className="h-[560px] w-[560px] rounded-md" />
         </div>
       ) : (
-        <Card className="flex bg-gradient-to-tr from-green-400 to-blue-500 text-white shadow-lg p-4">
+        <Card className="flex bg-gradient-to-tr from-primary-300 to-secondary-300 text-white shadow-lg p-4">
           {keywords.length > 0 ? (
             <TextSphere keywords={keywords} />
           ) : (

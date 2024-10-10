@@ -133,9 +133,7 @@ const CompanyNewsPage = () => {
                       variant="light"
                       target="_blank"
                       rel="noopener noreferrer"
-                    >
-                      기사 보기
-                    </Button>
+                    ></Button>
                   ) : null}
                 </li>
               ))}
