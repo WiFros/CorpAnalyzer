@@ -1,4 +1,5 @@
 import requests
+import json
 from hdfs import InsecureClient
 
 #domain: str = "70.12.247.100:8080"
@@ -11,7 +12,7 @@ def embedding_processing(**context):
 
     # request to fast api gpu server
     request_url: str = f'http://{domain}/embedding'
-    response = requests.post(url=request_url, json=collected_data)
+    response = requests.post(url=request_url, json=collected_data[:10])
 
     if response.status_code != 200:
         raise Exception(response.status_code, response.json())

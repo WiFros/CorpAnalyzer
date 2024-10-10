@@ -89,7 +89,7 @@ def _make_html_file(report: Report, corp_name: str, report_name: str) -> None:
 
     #하둡
     hadoop_client = InsecureClient('http://j11a606a.p.ssafy.io:9870', user='hadoop')
-    hdfs_file_path = f'/data/dart/{company_name}/{report_name}/{company_name}.json'
+    hdfs_file_path = f'/data/dart/{corp_name}/{report_name}/{corp_name}.json'
 
     for page in report.pages:
         page_dict: dict = page.to_dict()
