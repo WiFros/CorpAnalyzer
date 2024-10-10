@@ -4,7 +4,6 @@ import os
 from elasticsearch import Elasticsearch, helpers
 from typing import Dict
 from schemas.elasticsearch.request import NewsESSchema
-from schemas.summarization import SumResponse
 from pydantic import ValidationError
 
 dotenv.load_dotenv()
