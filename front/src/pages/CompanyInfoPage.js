@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { Card, CardHeader, CardBody, Divider } from "@nextui-org/react";
+import ReactMarkdown from "react-markdown";
 
 const CompanyInfoPage = () => {
   const location = useLocation();
@@ -64,7 +65,9 @@ const CompanyInfoPage = () => {
           주요 사업 내용
         </CardHeader>
         <Divider />
-        <CardBody>{info.result.business_overview}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.business_overview}</ReactMarkdown>
+        </CardBody>
       </Card>
 
       <Card
@@ -83,7 +86,9 @@ const CompanyInfoPage = () => {
           주요 제품 및 서비스
         </CardHeader>
         <Divider />
-        <CardBody>{info.result.products_and_sales}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.products_and_sales}</ReactMarkdown>
+        </CardBody>
       </Card>
 
       <Card
@@ -102,7 +107,9 @@ const CompanyInfoPage = () => {
           주요 계약 및 연구 개발 활동
         </CardHeader>
         <Divider />
-        <CardBody>{info.result.contracts_and_rnd}</CardBody>
+        <CardBody>
+          <ReactMarkdown>{info.result.contracts_and_rnd}</ReactMarkdown>
+        </CardBody>
       </Card>
     </div>
   );
