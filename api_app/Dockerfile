@@ -1,9 +1,10 @@
 # Python 3.12 공식 이미지를 기반으로 합니다
 FROM python:3.12-slim
 
-# 필수 패키지 업데이트 및 JDK 17 설치
+# 필수 패키지 업데이트 및 JDK 17, 빌드 도구 설치
 RUN apt-get update && apt-get install -y \
     openjdk-17-jdk \
+    build-essential \
     --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -18,8 +19,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 코드 복사
 COPY ./app /api_app/app
 
-
-
 # PYTHONPATH 설정
 ENV PYTHONPATH=/api_app
 
@@ -31,4 +30,4 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 EXPOSE 8000
 
 # 애플리케이션 실행
-CMD ["python", "app/main.py"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

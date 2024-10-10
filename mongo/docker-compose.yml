@@ -1,0 +1,13 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always  # 컨테이너가 중단되면 자동으로 재시작
+
+volumes:
+  mongo-data:
+    driver: local
