@@ -10,7 +10,7 @@ def embedding_processing(**context):
 
     # request to fast api gpu server
     request_url: str = f'http://{domain}/embedding'
-    response = requests.post(url=request_url, json=collected_data[:10])
+    response = requests.post(url=request_url, json=collected_data)
 
     if response.status_code != 200:
         raise Exception(response.status_code, response.json())
