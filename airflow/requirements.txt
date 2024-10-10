@@ -4,3 +4,4 @@ elasticsearch
 motor
 torch
 transformers
+hdfs
