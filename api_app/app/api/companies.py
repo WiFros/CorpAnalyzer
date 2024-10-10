@@ -100,6 +100,49 @@ async def all_company_summary(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@companies_router.get("/financials/{comp_name}/{year}")
+async def get_financial_data(
+    comp_name: str,
+    year: int,
+    db = Depends(get_database)
+):
+    collection = db.financial_data
+    data = await collection.find_one({"corp_name": comp_name})
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Company financial data not found")
+
+    yearly_data = data.get("yearly_data", {}).get(str(year), {})
+
+    if not yearly_data:
+        raise HTTPException(status_code=404, detail="Financial data for the specified year not found")
+
+    return {
+        "corp_name": comp_name,
+        "year": year,
+        "financial_data": yearly_data
+    }
+
+@companies_router.get("/financials/{comp_name}")
+async def get_financial_data(
+    comp_name: str,
+    db = Depends(get_database)
+):
+    collection = db.financial_data
+    data = await collection.find_one({"corp_name": comp_name})
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Company financial data not found")
+
+    yearly_data = data.get("yearly_data", {})
+
+    if not yearly_data:
+        raise HTTPException(status_code=404, detail="No financial data found for the company")
+
+    return {
+        "corp_name": comp_name,
+        "financial_data": yearly_data
+    }
 
 @companies_router.get("/dart_reports/{company_name}", response_model=DartReportResponse)
 async def dart_report(
@@ -115,3 +158,4 @@ async def dart_report(
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
