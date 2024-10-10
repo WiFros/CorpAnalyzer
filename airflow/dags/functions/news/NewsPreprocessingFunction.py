@@ -1,4 +1,5 @@
 import requests
+from hdfs import InsecureClient
 
 #domain: str = "70.12.247.100:8080"
 #domain: str = "70.12.114.101:8080"
@@ -48,4 +49,18 @@ def summarization_processing(**context):
 
 
 def store_to_hadoop(**context) -> None:
-    pass
+    data_list: list[dict] = context['task_instance'].xcom_pull(task_ids='summarization_processing')
+    #하둡
+    hadoop_client = InsecureClient('http://j11a606a.p.ssafy.io:9870', user='hadoop')
+
+    for data in data_list:
+        company_name = data["company_names"]
+        date = data["pubDate"]
+        hdfs_file_path = f'/data/news/{company_name}/{date}/{company_name}.json'
+
+        # 하둡 저장
+        json_data = json.dumps(data, indent=4, ensure_ascii=False)
+            
+        with hadoop_client.write(hdfs_file_path, encoding='utf-8', overwrite=True) as writer:
+            writer.write(json_data)
+
