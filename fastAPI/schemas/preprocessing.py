@@ -9,6 +9,7 @@ class PreprocessingResponse(BaseModel):
     description : str
     company_names : List[str]
     summary : str
+    embedding_vector : List[float]
     # published_date: datetime 
 
 class PreprocessingBatchResponse(BaseModel):

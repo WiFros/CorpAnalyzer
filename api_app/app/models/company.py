@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Any, Dict
+
 
 class Company(BaseModel):
     corp_code: str = Field(..., alias="company_id")
@@ -14,3 +15,31 @@ class CompanyList(BaseModel):
     page: int
     total_pages: int
 
+
+class News(BaseModel):
+    title:str
+    link:str
+
+
+
+class Move(BaseModel):
+    field: str
+    current_activity: List[str]
+
+class Result(BaseModel):
+    title: str
+    move: List[Move]
+    summary: str
+
+class CompanyResult(BaseModel):
+    _id: str
+    result: Result
+    company_name: str
+    news: List[News]
+
+class DartReportResponse(BaseModel):
+    status: str
+    data: Dict[str, Any]  # MongoDB 문서가 dictionary로 반환되므로 Dict로 타입 지정
+
+    class Config:
+        orm_mode = True  # MongoDB 데이터를 처리하기 위한 옵션

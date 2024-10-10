@@ -44,6 +44,7 @@ def dedup(text: pd.DataFrame)->pd.DataFrame:
     model.to("cpu")
     torch.cuda.empty_cache()
     del model
+    text["embedding_vector"] = embeddings_list
     # step 1 : ANN으로 중복제거
     # dim = len(embeddings_list[0])
     # index= faiss.IndexFlatL2(dim)

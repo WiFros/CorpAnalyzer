@@ -27,12 +27,13 @@ async def summ_function(request: List[NerResponse]):
                 company_names =  row.company_names if row.company_names is not None else [],
                 pubDate = row.pubDate,
                 link = row.link,
-                summary = row.summary
+                summary = row.summary,
+                embedding_vector = row.embedding_vector
             )
 )
 
     # es_client = ESclient()
-    # es_client.index_docs("news_docs", res)
+    # es_client.index_docs("news_test", res)
     response = SumBatchResponse(
         status="success",
         message="Successfully extracted summary data.",

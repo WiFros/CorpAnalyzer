@@ -1,26 +1,21 @@
-# app/services/company_search.py
+# app/services/hotKeyword_search.py
 
-from app.utils.optimized_search import OptimizedSearch
-from app.models.company import Company
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from cachetools import TTLCache
+import os
+from pathlib import Path
 from elasticsearch import Elasticsearch
 from konlpy.tag import Okt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from datetime import datetime
-
 import pandas as pd
-import asyncio
 
 
 class hotKeywordService:
-    def __init__(self,corp_name : str):
-
+    def __init__(self, corp_name: str):
         self.db = Elasticsearch(
-                hosts="https://j11a606.p.ssafy.io:9200",
-                verify_certs=False,
-                basic_auth=('elastic', 'ssafya606')
-            )
+            hosts="https://j11a606.p.ssafy.io:9200",
+            verify_certs=False,
+            basic_auth=('elastic', 'ssafya606')
+        )
         self.query = {
                 "query" :{
                             "match" : {
@@ -34,9 +29,23 @@ class hotKeywordService:
                 "min_score" : 1.5, # 스코어 필터링
             }
         self.corp_name = corp_name
-        self.stop_words=  pd.read_csv('./stopwords.txt', header = None)[0].tolist()
+
+        # stopwords.txt 파일 경로 설정
+        current_file = Path(__file__)
+        project_root = current_file.parent.parent.parent  # app 디렉토리로 이동
+        stopwords_path = project_root / 'stopwords.txt'
+
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"Attempting to read stopwords from: {stopwords_path}")
+
+        if stopwords_path.exists():
+            self.stop_words = pd.read_csv(stopwords_path, header=None)[0].tolist()
+        else:
+            print(f"Warning: stopwords.txt not found at {stopwords_path}")
+            self.stop_words = []  # 또는 기본 불용어 목록 사용
+
         self.nori = Okt()
-        self.embed = TfidfVectorizer(stop_words= self.stop_words)
+        self.embed = TfidfVectorizer(stop_words=self.stop_words)
 
     async def fetch_hotkeyword(self):
 
@@ -47,10 +56,10 @@ class hotKeywordService:
         length = len(result['hits']['hits'])
         for idx in range(length):
             documents.append(result['hits']['hits'][idx]["_source"])
-        
+
         df = pd.DataFrame(documents)
         df['tokenizer'] = df['description'].apply(self.preprocess_text)
-        
+
         res = self.embed.fit_transform(df['tokenizer'])
 
         # TF-IDF 점수를 DataFrame으로 변환
@@ -65,8 +74,8 @@ class hotKeywordService:
         top_words_list = [word for word in top_words.index]
 
         return {
-        "corp_name": self.corp_name,
-        "keywords": top_words_list
+            "corp_name": self.corp_name,
+            "keywords": top_words_list
         }
     
     async def fetch_hotkeyword_with_news(self):

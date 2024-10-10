@@ -2,7 +2,6 @@ import datetime
 from typing import List
 from pydantic import BaseModel
 
-
 class NewsItem(BaseModel):
     title : str
     description : str
