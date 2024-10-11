@@ -1,67 +1,79 @@
-# 기업 해체 분석기
+다음은 제공된 요약과 PDF 내용을 바탕으로 한 프로젝트 README입니다.
 
-## 소개
-이 프로젝트는 기업 데이터를 이용하여 분석하는 사이트를 제공합니다. 
-API 게이트웨이, 뉴스 서비스, DART 서비스로 구성된 마이크로서비스 아키텍처를 사용합니다.
+---
 
-## 사전 요구 사항
-- Docker
-- Docker Compose
-- NVIDIA GPU (dart_serv_app 및 news_serv_app용)
+# 기업 해체 분석기 - Six-Pack
 
-## 설치 및 실행
-1. 저장소를 클론합니다:
-   ```
-   git clone [저장소 URL]
-   cd [프로젝트 디렉토리]
-   ```
-2. `.env.example`을 복사하여 `.env` 파일을 만들고 필요한 환경 변수를 설정합니다:
-   ```
-   cp .env.example .env
-   ```
-3. 다음 명령어로 서비스를 빌드하고 실행합니다:
-   ```
-   docker-compose up --build
-   ```
+## 프로젝트 설명
+**기업 해체 분석기**는 DART 전자 공시 문서와 최신 뉴스 데이터를 분석하여 기업의 주요 정보를 제공하는 서비스입니다. 생성형 AI, Elasticsearch, 그리고 다양한 데이터 시각화 도구를 통해 기업 분석과 관련된 모든 정보를 통합하여 사용자에게 제공합니다. 이 서비스는 특히 취업 준비생이나 기업 분석을 필요로 하는 사람들에게 기업 현황, 최신 산업 트렌드, 재무 분석 등을 쉽고 빠르게 제공하는 것을 목표로 합니다.
 
-## 서비스 설명
-- api_app (포트 8000): API 게이트웨이
-- news_serv_app (포트 8001): 뉴스 처리 서비스
-- dart_serv_app (포트 8002): DART 데이터 처리 서비스
+## 주요 기능
+1. **전자 공시 문서 요약**
+   - DART에서 추출한 방대한 기업 공시 보고서를 분석하고, 기업 현황, 연구 및 계약 정보 등을 요약하여 시각적으로 제공합니다.
 
-## API 사용 방법
-[API 엔드포인트와 사용 예시를 여기에 추가하세요]
+2. **뉴스 분석 및 트렌드 시각화**
+   - Elasticsearch 기반의 뉴스 데이터 분석으로, 상위 500개의 뉴스 문서에서 가장 중요한 50개 문서를 추출하고 이를 요약하여 시각화합니다.
+   - 기업당 100개의 뉴스를 분석하여 키워드 기반 트렌드 워드 클라우드를 생성하고, 최신 트렌드를 한눈에 파악할 수 있도록 시각화합니다.
 
-## Git Hooks 설정
+3. **재무제표 시각화**
+   - DART에서 제공하는 주요 재무제표 데이터를 크롤링하고 이를 시각화하여, 매출액 추이, 성장률, 수익성 지표 등을 제공합니다.
 
-이 프로젝트는 일관된 코드 품질과 커밋 메시지 형식을 유지하기 위해 Git hooks를 사용합니다. 
+4. **뉴스 중복 제거**
+   - BigBird Transformer 기반의 임베딩과 DBSCAN 군집화 알고리즘을 통해 뉴스 문서 중복을 30~50% 제거합니다.
 
-### 자동 설정
+5. **문서 요약 및 회사 이름 추출**
+   - KoELECTRA 기반의 NER 모델로 뉴스 본문에서 기업 이름을 추출하고, Bart 모델을 이용하여 문서를 요약합니다.
 
-프로젝트를 클론하고 pull을 받을 때마다 Git hooks가 자동으로 설정되고 업데이트됩니다. 별도의 설정이 필요하지 않습니다.
+## 기술 스택
+- **Frontend**: React
+- **Backend**: FastAPI
+- **Database**: MongoDB, Elasticsearch, Hadoop
+- **Infra**: Jenkins, Nginx, Docker, Airflow
+- **Deep Learning**: Huggingface Transformers, Pytorch, Numpy, Pandas
 
-### 수동 설정 (필요한 경우)
+## 설치 및 실행 방법
+### 1. 환경 설정
+   - Docker, docker-compose 설치 필수
 
-만약 Git hooks가 자동으로 설정되지 않았다면, 다음 명령어를 실행하여 수동으로 설정할 수 있습니다:
+   - 프로젝트 클론:
+     ```bash
+     git clone http://j11a606a.p.ssafy.io
+     cd S11P21A606
+     ```
 
-```bash
-bash setup-git-hooks.sh
-```
+### 2. 프로젝트 간단 실행(도커 사용)
+   - Frontend 설치:
+     ```bash
+     cd front
+     docker-compose up -d
+     ```
+   - Backend 설치:
+     ```bash
+     cd api_app
+     docker-compose up -d
+     ```
+   - ES 실행
 
-### 커밋 메시지 규칙
+## 사용법
+1. 웹 애플리케이션 실행 후, 기업 이름을 검색하여 관련 정보를 확인합니다.
+2. DART 기반의 재무제표와 관련 뉴스 데이터를 통해 기업의 현재 상황과 트렌드를 시각적으로 파악할 수 있습니다.
 
-모든 커밋 메시지는 다음 형식을 따라야 합니다:
+## 기여 방법
+- 이 프로젝트에 기여하고 싶으시면, Fork를 하신 후 Pull Request를 보내주시거나 이슈를 등록해주세요.
+- 기여 전 `CONTRIBUTING.md` 파일을 참고해주세요.
 
-```
-type: subject
-```
+## 라이센스
+- 이 프로젝트는 MIT 라이센스를 따릅니다. 자세한 내용은 `LICENSE` 파일을 참고하세요.
 
-- `type`은 다음 중 하나여야 합니다: feat, fix, docs, style, refactor, test, chore, init
-- `subject`는 변경사항에 대한 간단한 설명이어야 하며, 50자를 넘지 않아야 합니다.
+## 개발 팀
+- **Frontend**: 홍수연
+- **Backend**: 안재현, 김도훈, 이현재, 김세훈, 박정영
+- **Infra**: 박정영, 김도훈
 
-예시:
-- `feat: 사용자 로그인 기능 추가`
-- `fix: 홈페이지 로딩 속도 개선`
-- `docs: README 파일 업데이트`
+## 참고 자료
+- [Open Dart API](https://dart.fss.or.kr)
+- [Naver Finance API](https://finance.naver.com)
 
-이 규칙을 따르지 않는 커밋은 자동으로 거부됩니다.
+---
+
+이 README는 프로젝트의 개요와 주요 기능을 포함하며, 기술 스택과 실행 방법을 제공하고 있습니다. 이를 통해 개발자들이 프로젝트를 이해하고, 기여할 수 있도록 돕습니다.
