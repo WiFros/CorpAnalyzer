@@ -97,6 +97,21 @@
    - langchainserver **(!!엔디비아 GPU 서버 필수!!)** 실행 : 
       ```bash
          cd ./langchainserver
+
+         # .evn를 생성해야 합니다. mongoDB의 URL 을 입력하세요.
+         cat <<EOL > .env
+         RERANKER_MODEL_NAME=Dongjin-kr/ko-reranker
+         EMBEDDING_MODEL_NAME=monologg/kobigbird-bert-base
+         GOOGLE_API_KEY={GOOGLE api 키를 입력하세요}
+         GOOGLE_MODEL_NAME=gemini-1.5-flash-latest
+
+         ES_LOCALHOST=http://localhost:9200
+         ES_HOST={ES의 서버 URL을 입력하세요}
+         ES_ID={ES의 Id를 입력하세요}
+         ES_PASSWORD={ES의 PW를 입력하세요}
+         ES_INDEX_NAME=news_embedding
+         EOL
+
          pip install -r requirements.txt
          fastapi dev main.py --port 8082
       ```
@@ -108,7 +123,9 @@
 
 ## 개발 팀
 - **Frontend**: 홍수연
+- **Data Collection and Preprocessing**: 김세훈
 - **Backend**: 안재현, 김도훈, 이현재, 김세훈, 박정영
+- **Deep Learning + AI **: 안재현,이현재
 - **Infra**: 박정영, 김도훈
 
 ## 참고 자료
