@@ -1,7 +1,3 @@
-다음은 제공된 요약과 PDF 내용을 바탕으로 한 프로젝트 README입니다.
-
----
-
 # 기업 해체 분석기 - Six-Pack
 
 ## 프로젝트 설명
@@ -37,33 +33,77 @@
 
    - 프로젝트 클론:
      ```bash
-     git clone http://j11a606a.p.ssafy.io
+     git clone https://lab.ssafy.com/s11-bigdata-dist-sub1/S11P21A606.git
      cd S11P21A606
      ```
 
-### 2. 프로젝트 간단 실행(도커 사용)
-   - Frontend 설치:
+### 2. 프로젝트 간단 실행(도커 컴포즈 필수)
+   - Frontend 실행:
      ```bash
      cd front
+
+     # .evn를 생성해야 합니다. 서버의 URL 을 입력하세요.
+     cat <<EOL > .env
+     VITE_API_URL={이곳에 api 서버의 URL을 입력하세요}
+     EOL
+     
      docker-compose up -d
      ```
-   - Backend 설치:
+   - Backend 실행:
      ```bash
      cd api_app
+
+     # .evn를 생성해야 합니다. mongoDB의 URL 을 입력하세요.
+     cat <<EOL > .env
+     MONGO_URI=mongodb://{id}:{pw}@{ip 혹은 도메인}:{port}/admin?authSource=admin
+     EOL
+
      docker-compose up -d
      ```
-   - ES 실행
+   - ES 실행:
+      ```bash
+      cd ElasticSearch
+      docker-compose up -d
+      ```
+   - MongoDB 실행:
+      ```bash
+      cd mongo
+      docker-compose up -d
+      ```
+   - Airflow 실행 : 
+      ```bash
+      cd airflow
+      astro dev restart
+
+      ```
+
+   **지금부터는**
+   ```
+   cuda 12.x+
+   cudnn 8.9.1
+   ```
+   버전의 드라이버 설정이 필수적으로 필요합니다. 
+
+   - fastApi(뉴스 전처리 **!!엔디비아 GPU 서버 필수!!**) 실행 : 
+      ```bash
+      cd ./fastapi
+      pip install -r requirements.txt
+      fastapi dev main.py --port 8081 
+      or
+
+      uvicorn main:app --host 0.0.0.0 --port 8081
+      ```
+   - langchainserver (!!*엔디비아 GPU 서버 필수*!!) 실행 : 
+      ```bash
+         cd ./langchainserver
+         pip install -r requirements.txt
+         fastapi dev main.py --port 8082
+      ```
 
 ## 사용법
 1. 웹 애플리케이션 실행 후, 기업 이름을 검색하여 관련 정보를 확인합니다.
 2. DART 기반의 재무제표와 관련 뉴스 데이터를 통해 기업의 현재 상황과 트렌드를 시각적으로 파악할 수 있습니다.
 
-## 기여 방법
-- 이 프로젝트에 기여하고 싶으시면, Fork를 하신 후 Pull Request를 보내주시거나 이슈를 등록해주세요.
-- 기여 전 `CONTRIBUTING.md` 파일을 참고해주세요.
-
-## 라이센스
-- 이 프로젝트는 MIT 라이센스를 따릅니다. 자세한 내용은 `LICENSE` 파일을 참고하세요.
 
 ## 개발 팀
 - **Frontend**: 홍수연
