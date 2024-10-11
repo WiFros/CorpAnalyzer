@@ -72,6 +72,7 @@
       ```
    - Airflow 실행 : 
       ```bash
+      curl -sSL install.astronomer.io | sudo bash -s
       cd airflow
       astro dev restart
 
@@ -93,7 +94,7 @@
 
       uvicorn main:app --host 0.0.0.0 --port 8081
       ```
-   - langchainserver (!!*엔디비아 GPU 서버 필수*!!) 실행 : 
+   - langchainserver **(!!엔디비아 GPU 서버 필수!!)** 실행 : 
       ```bash
          cd ./langchainserver
          pip install -r requirements.txt
