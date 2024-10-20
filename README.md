@@ -125,7 +125,7 @@
 - **Frontend**: 홍수연
 - **Data Collection and Preprocessing**: 김세훈
 - **Backend**: 안재현, 김도훈, 이현재, 김세훈, 박정영
-- **Deep Learning + AI **: 안재현,이현재
+- **Deep Learning + AI**: 안재현,이현재
 - **Infra**: 박정영, 김도훈
 
 ## 참고 자료
